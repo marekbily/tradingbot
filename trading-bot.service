@@ -1,0 +1,16 @@
+[Unit]
+Description=DRL Trading Bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=__USER__
+WorkingDirectory=__PROJECT_DIR__
+Environment="PYTHONPATH=__PROJECT_DIR__"
+ExecStart=__PROJECT_DIR__/venv/bin/python __PROJECT_DIR__/live_trade_metaapi.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

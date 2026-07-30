@@ -1,191 +1,129 @@
-# Trading Bot Deployment Guide
+# ForpsiCloud VPS Deployment Guide
 
-## Option 1: AWS Lightsail (Recommended - $3.50/month)
+This guide is tailored to your ForpsiCloud VPS:
 
-### Step 1: Create Lightsail Instance
-1. Go to https://lightsail.aws.amazon.com/
-2. Click "Create instance"
-3. Select:
-   - Platform: Linux/Unix
-   - Blueprint: Ubuntu 22.04 LTS
-   - Plan: $3.50/month (512 MB RAM, 1 vCPU)
-4. Name it "trading-bot"
-5. Click "Create instance"
+- Ubuntu Server 24.04 LTS 64-bit
+- 1 vCPU
+- 1 GB RAM
+- 20 GB disk
+- Public IP: 194.182.83.34
 
-### Step 2: Connect and Setup
+The bot should run with MetaAPI on the VPS, not MT5 desktop. Use `live_trade_metaapi.py`.
+For MetaAPI paper trading, you still need a broker demo MT4/MT5 account connected inside MetaAPI.
+
+## 1. Connect To The VPS
+
+From your local machine, SSH into the server using the username Forpsi gave you:
+
 ```bash
-# SSH into your server (use Lightsail web console or SSH)
-ssh ubuntu@YOUR_SERVER_IP
+ssh YOUR_USER@194.182.83.34
+```
 
-# Upload setup script
-# On your local machine:
-scp deploy_setup.sh ubuntu@YOUR_SERVER_IP:~/
-scp trading-bot.service ubuntu@YOUR_SERVER_IP:~/
+If you log in as `root`, use that instead of `YOUR_USER`.
 
-# On server, run setup:
+## 2. Upload The Repository
+
+If the repository is already on GitHub, clone it on the server:
+
+```bash
+git clone YOUR_REPO_URL ~/trading-bot
+cd ~/trading-bot
+```
+
+If you want to upload the current workspace directly, copy the folder from your PC to the VPS:
+
+```bash
+scp -r tradingbot YOUR_USER@194.182.83.34:~/trading-bot
+```
+
+## 3. Prepare The Server
+
+On the VPS, run the setup script already included in this repo:
+
+```bash
+cd ~/trading-bot
 chmod +x deploy_setup.sh
 ./deploy_setup.sh
 ```
 
-### Step 3: Upload Your Code
+The script will:
+
+- install system packages
+- create `venv`
+- install `requirements.txt`
+- create `.env` from `.env.example` if needed
+- install and enable the `trading-bot` systemd service
+
+## 4. Configure Secrets And Trading Settings
+
+Edit `~/trading-bot/.env` on the VPS and set at least:
+
 ```bash
-# On your local machine:
-cd ~/Desktop/trading
-scp -r drl-trading ubuntu@YOUR_SERVER_IP:~/trading-bot/
+METAAPI_TOKEN=your_metaapi_token_here
+METAAPI_ACCOUNT_ID=your_account_id_here
 ```
 
-### Step 4: Setup Auto-Start Service
-```bash
-# On server:
-sudo cp ~/trading-bot.service /etc/systemd/system/
-sudo systemctl daemon-reload
-sudo systemctl enable trading-bot
-sudo systemctl start trading-bot
+If you have no MetaAPI account yet, create one at [MetaAPI](https://metaapi.cloud/), then add a broker demo account there and copy the token and account ID into `.env`.
 
-# Check status:
+Optional but useful values are already defined in `.env.example`:
+
+```bash
+SYMBOL=XAUUSD
+TIMEFRAME=1h
+VOLUME=0.01
+MODEL_PATH=train/ppo_xauusd_latest.zip
+MAX_RISK_PER_TRADE=0.02
+MAX_DAILY_LOSS=0.05
+MAX_POSITIONS=3
+```
+
+## 5. Start The Bot
+
+```bash
+sudo systemctl start trading-bot
 sudo systemctl status trading-bot
-
-# View logs:
-sudo journalctl -u trading-bot -f
 ```
 
-### Step 5: Manage Your Bot
+If the service is healthy, you should see `active (running)`.
+
+## 6. Manage The Bot
+
 ```bash
-# Stop bot
 sudo systemctl stop trading-bot
-
-# Start bot
 sudo systemctl start trading-bot
-
-# Restart bot
 sudo systemctl restart trading-bot
-
-# View logs (live)
 sudo journalctl -u trading-bot -f
-
-# View last 100 lines
 sudo journalctl -u trading-bot -n 100
 ```
 
----
+## 7. Updating Code Later
 
-## Option 2: DigitalOcean ($4/month)
+After you change the code locally, upload the repo again and restart the service:
 
-### Step 1: Create Droplet
-1. Go to https://www.digitalocean.com/
-2. Click "Create" → "Droplets"
-3. Choose:
-   - Ubuntu 22.04 LTS
-   - Basic plan: $4/month (512 MB / 1 CPU)
-   - Datacenter: Closest to you
-4. Add SSH key or use password
-5. Click "Create Droplet"
-
-### Step 2: Follow same steps as AWS Lightsail above
-
----
-
-## Option 3: Google Cloud Free Tier
-
-### Create VM Instance
-1. Go to https://console.cloud.google.com/
-2. Compute Engine → VM instances
-3. Create instance:
-   - Machine type: e2-micro (free tier eligible)
-   - Boot disk: Ubuntu 22.04 LTS
-   - Allow HTTP/HTTPS traffic
-4. SSH and follow setup steps above
-
----
-
-## Option 4: Run on Your Mac (Simple but computer must stay on)
-
-### Using screen (keeps running when you close terminal):
 ```bash
-# Install screen if needed
-brew install screen
-
-# Start screen session
-screen -S trading-bot
-
-# Run your bot
-cd ~/Desktop/trading/drl-trading
-PYTHONPATH=. bin/python live_trade_metaapi.py
-
-# Detach: Press Ctrl+A then D
-# Reattach: screen -r trading-bot
-# Kill session: screen -X -S trading-bot quit
+scp -r tradingbot YOUR_USER@194.182.83.34:~/trading-bot
+ssh YOUR_USER@194.182.83.34
+cd ~/trading-bot
+sudo systemctl restart trading-bot
 ```
 
-### Using nohup (simpler):
+## 8. What The Service Runs
+
+The service starts:
+
 ```bash
-cd ~/Desktop/trading/drl-trading
-nohup PYTHONPATH=. bin/python live_trade_metaapi.py > trading.log 2>&1 &
-
-# View logs:
-tail -f trading.log
-
-# Find process ID:
-ps aux | grep live_trade_metaapi
-
-# Stop bot (replace PID with actual process ID):
-kill PID
+~/trading-bot/venv/bin/python ~/trading-bot/live_trade_metaapi.py
 ```
 
----
+The service file is included as `trading-bot.service`, and the installer rewrites it for the current user and project path.
 
-## Monitoring Your Bot
+## 9. Notes For This VPS Size
 
-### Check if bot is running:
-```bash
-# If using systemd:
-sudo systemctl status trading-bot
+The 1 GB RAM VPS should be fine for this bot because the live loop is lightweight:
 
-# If using nohup/screen:
-ps aux | grep live_trade_metaapi
-```
+- it loads one model
+- fetches market data periodically
+- sends occasional MetaAPI requests
+- does not need a GUI or MT5 terminal
 
-### View logs:
-```bash
-# Systemd:
-sudo journalctl -u trading-bot -f
-
-# Nohup:
-tail -f ~/trading.log
-
-# Screen:
-screen -r trading-bot
-```
-
----
-
-## Cost Comparison
-
-| Provider | Cost/Month | RAM | CPU | Notes |
-|----------|------------|-----|-----|-------|
-| AWS Lightsail | $3.50 | 512 MB | 1 vCPU | Easy setup |
-| DigitalOcean | $4.00 | 512 MB | 1 vCPU | User-friendly |
-| Google Cloud | Free* | 614 MB | Shared | Free tier limits apply |
-| Heroku | $7.00 | 512 MB | 1 vCPU | Easiest deployment |
-| Your Mac | $0 | N/A | N/A | Must keep computer on |
-
-*Google Cloud free tier: 720 hours/month (enough for 1 VM running 24/7)
-
----
-
-## Recommended: AWS Lightsail
-
-For your use case, I recommend **AWS Lightsail** because:
-- Only $3.50/month
-- Very reliable (99.99% uptime)
-- Easy to set up
-- Simple billing (no surprises)
-- Can easily upgrade if needed
-- Built-in firewall and monitoring
-
-The 512 MB RAM instance is more than enough for your trading bot since it only:
-- Fetches data every 10 seconds
-- Runs one ML model prediction
-- Makes occasional API calls
-
-Your bot uses minimal resources!
+If you later want MT5 desktop trading, use a Windows machine or a different remote setup. For this VPS, MetaAPI is the correct path.

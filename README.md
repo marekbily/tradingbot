@@ -286,7 +286,7 @@ The `.env` file is already in `.gitignore` - it will never be committed to git.
 
 **Get your MetaAPI credentials:**
 1. Sign up at [MetaAPI](https://metaapi.cloud/)
-2. Create a trading account connection
+2. Create or connect a broker demo MT4/MT5 account in MetaAPI for paper trading
 3. Copy your API token and account ID
 
 ---
@@ -379,7 +379,10 @@ python evaluate_model.py --model train/ppo_xauusd_latest.zip
 
 ### Step 4: Paper Trading (Test with Fake Money)
 
-Before risking real money, test with a demo account:
+Before risking real money, test with a demo account.
+
+If you want local paper trading, log MetaTrader 5 into a broker demo account and run `live_trade_mt5.py`.
+If you want cloud paper trading through MetaAPI, first connect a broker demo MT4/MT5 account in MetaAPI, then run `live_trade_metaapi.py`.
 
 ```bash
 # Make sure MT5 is logged into a DEMO account
