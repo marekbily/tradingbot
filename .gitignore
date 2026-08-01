@@ -17,7 +17,7 @@ share/
 pyvenv.cfg
 
 # Data files (exclude large datasets)
-*.csv
+xauusd_m1.csv
 data/*.json
 !data/.gitkeep
 
