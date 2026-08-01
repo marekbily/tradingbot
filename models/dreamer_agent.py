@@ -13,7 +13,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.optim import Adam  # Use Adam instead of AdamW to avoid transformers import issue
 import numpy as np
-from collections import deque
 
 from models.dreamer_components import (
     Encoder, RSSM, Decoder, RewardPredictor, Actor, Critic,
@@ -23,62 +22,54 @@ from models.dreamer_components import (
 
 class ReplayBuffer:
     """Experience replay buffer for sequences"""
-    def __init__(self, capacity=100_000, seq_len=64):
+    def __init__(self, obs_dim, action_dim, capacity=100_000, seq_len=64, device='cpu'):
         self.capacity = capacity
         self.seq_len = seq_len
-        self.buffer = deque(maxlen=capacity)
+        self.device = torch.device(device)
+        self.obs_dim = int(obs_dim)
+        self.action_dim = int(action_dim)
+
+        # Store observations/actions in half precision to keep the GPU buffer compact.
+        self.obs_buffer = torch.empty((capacity, self.obs_dim), device=self.device, dtype=torch.float16)
+        self.action_buffer = torch.empty((capacity, self.action_dim), device=self.device, dtype=torch.float16)
+        self.reward_buffer = torch.empty((capacity,), device=self.device, dtype=torch.float32)
+        self.done_buffer = torch.empty((capacity,), device=self.device, dtype=torch.float32)
+
+        self.write_index = 0
+        self.size = 0
 
     def add(self, obs, action, reward, done):
         """Add a single transition"""
-        self.buffer.append({
-            'obs': obs,
-            'action': action,
-            'reward': reward,
-            'done': done
-        })
+        self.obs_buffer[self.write_index].copy_(obs.detach().to(self.device, dtype=torch.float16))
+        self.action_buffer[self.write_index].copy_(action.detach().to(self.device, dtype=torch.float16))
+        self.reward_buffer[self.write_index] = torch.as_tensor(reward, device=self.device, dtype=torch.float32)
+        self.done_buffer[self.write_index] = torch.as_tensor(done, device=self.device, dtype=torch.float32)
+
+        self.write_index = (self.write_index + 1) % self.capacity
+        self.size = min(self.size + 1, self.capacity)
 
     def sample(self, batch_size):
         """Sample sequences of length seq_len"""
-        if len(self.buffer) < self.seq_len + 1:
+        if self.size < self.seq_len + 1:
             return None
 
-        sequences = []
-        for _ in range(batch_size):
-            # Sample random starting point
-            start_idx = np.random.randint(0, len(self.buffer) - self.seq_len)
+        # Sample logical start positions from the oldest valid transition.
+        max_start = self.size - self.seq_len + 1
+        starts = torch.randint(0, max_start, (batch_size,), device=self.device)
+        offsets = torch.arange(self.seq_len, device=self.device)
+        indices = (self.write_index - self.size + starts[:, None] + offsets[None, :]) % self.capacity
 
-            # Extract sequence
-            seq_obs = []
-            seq_action = []
-            seq_reward = []
-            seq_done = []
-
-            for i in range(self.seq_len):
-                step = self.buffer[start_idx + i]
-                seq_obs.append(step['obs'])
-                seq_action.append(step['action'])
-                seq_reward.append(step['reward'])
-                seq_done.append(step['done'])
-
-            sequences.append({
-                'obs': np.stack(seq_obs),
-                'action': np.stack(seq_action),
-                'reward': np.array(seq_reward, dtype=np.float32),
-                'done': np.array(seq_done, dtype=np.float32)
-            })
-
-        # Stack into batch
         batch = {
-            'obs': torch.FloatTensor(np.stack([s['obs'] for s in sequences])),
-            'action': torch.FloatTensor(np.stack([s['action'] for s in sequences])),
-            'reward': torch.FloatTensor(np.stack([s['reward'] for s in sequences])),
-            'done': torch.FloatTensor(np.stack([s['done'] for s in sequences]))
+            'obs': self.obs_buffer[indices].float(),
+            'action': self.action_buffer[indices].float(),
+            'reward': self.reward_buffer[indices],
+            'done': self.done_buffer[indices],
         }
 
         return batch
 
     def __len__(self):
-        return len(self.buffer)
+        return self.size
 
 
 class DreamerV3Agent:
@@ -109,7 +100,7 @@ class DreamerV3Agent:
         free_nats=1.0,
         kl_balance=0.8,
     ):
-        self.device = device
+        self.device = torch.device(device)
         self.obs_dim = obs_dim
         self.action_dim = action_dim
         self.gamma = gamma
@@ -117,12 +108,12 @@ class DreamerV3Agent:
         self.horizon = horizon
 
         # Build networks
-        self.encoder = Encoder(obs_dim, embed_dim).to(device)
-        self.rssm = RSSM(embed_dim, hidden_dim, stoch_dim, num_categories, action_dim).to(device)
-        self.decoder = Decoder(hidden_dim + stoch_dim * num_categories, obs_dim).to(device)
-        self.reward_predictor = RewardPredictor(hidden_dim + stoch_dim * num_categories).to(device)
-        self.actor = Actor(hidden_dim + stoch_dim * num_categories, action_dim).to(device)
-        self.critic = Critic(hidden_dim + stoch_dim * num_categories).to(device)
+        self.encoder = Encoder(obs_dim, embed_dim).to(self.device)
+        self.rssm = RSSM(embed_dim, hidden_dim, stoch_dim, num_categories, action_dim).to(self.device)
+        self.decoder = Decoder(hidden_dim + stoch_dim * num_categories, obs_dim).to(self.device)
+        self.reward_predictor = RewardPredictor(hidden_dim + stoch_dim * num_categories).to(self.device)
+        self.actor = Actor(hidden_dim + stoch_dim * num_categories, action_dim).to(self.device)
+        self.critic = Critic(hidden_dim + stoch_dim * num_categories).to(self.device)
 
         # Optimizers
         world_model_params = (
@@ -136,7 +127,13 @@ class DreamerV3Agent:
         self.optimizer_critic = Adam(self.critic.parameters(), lr=lr_critic)
 
         # Replay buffer
-        self.replay_buffer = ReplayBuffer(capacity=100_000, seq_len=64)
+        self.replay_buffer = ReplayBuffer(
+            obs_dim=obs_dim,
+            action_dim=action_dim,
+            capacity=100_000,
+            seq_len=64,
+            device=device,
+        )
 
         # Hyperparameters
         self.free_nats = free_nats
@@ -155,10 +152,15 @@ class DreamerV3Agent:
             deterministic: use greedy action
 
         Returns:
-            action (np.array), new (h, z)
+            action (torch.Tensor), new (h, z)
         """
         with torch.no_grad():
-            obs_t = torch.FloatTensor(obs).unsqueeze(0).to(self.device)
+            if torch.is_tensor(obs):
+                obs_t = obs.to(self.device, dtype=torch.float32)
+                if obs_t.dim() == 1:
+                    obs_t = obs_t.unsqueeze(0)
+            else:
+                obs_t = torch.tensor(obs, dtype=torch.float32, device=self.device).unsqueeze(0)
 
             # Encode observation
             embed = self.encoder(obs_t)
@@ -184,10 +186,9 @@ class DreamerV3Agent:
             # Store for next step
             self.prev_action = action
 
-            # Detach before converting to numpy
-            return action.detach().cpu().numpy()[0], (h, z)
+            return action.detach()[0], (h, z)
 
-    def train_step(self, batch_size=16):
+    def train_step(self, batch_size=64):
         """
         Single training step
 
@@ -200,9 +201,9 @@ class DreamerV3Agent:
         if batch is None:
             return None
 
-        obs = batch['obs'].to(self.device)  # (B, T, obs_dim)
-        action = batch['action'].to(self.device)  # (B, T, action_dim)
-        reward = batch['reward'].to(self.device)  # (B, T)
+        obs = batch['obs']  # (B, T, obs_dim)
+        action = batch['action']  # (B, T, action_dim)
+        reward = batch['reward']  # (B, T)
 
         B, T = obs.shape[0], obs.shape[1]
 

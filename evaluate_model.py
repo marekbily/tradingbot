@@ -154,7 +154,7 @@ def evaluate_model(agent, env, timestamps):
         'max_drawdown': max_drawdown,
         'win_rate': win_rate,
         'final_equity': equity_curve[-1],
-        'num_trades': len(positions),
+        'num_trades': int(np.sum(np.abs(np.diff(positions)) > 0)) if len(positions) > 1 else 0,
         'long_percentage': long_pct,
     }
 
@@ -167,8 +167,13 @@ def plot_results(equity_curve, positions, dates, metrics, save_path='results.png
 
     fig, axes = plt.subplots(3, 1, figsize=(14, 10))
 
+    # Use the same time axis length as the post-reset series.
+    plot_dates = dates
+    plot_equity = equity_curve[1:]
+    plot_positions = positions
+
     # Equity curve
-    axes[0].plot(dates, equity_curve, linewidth=2, color='green')
+    axes[0].plot(plot_dates, plot_equity, linewidth=2, color='green')
     axes[0].set_title(f'Equity Curve - Final: ${equity_curve[-1]:.2f}', fontsize=14, fontweight='bold')
     axes[0].set_ylabel('Equity ($)', fontsize=12)
     axes[0].grid(True, alpha=0.3)
@@ -176,16 +181,16 @@ def plot_results(equity_curve, positions, dates, metrics, save_path='results.png
     axes[0].legend()
 
     # Drawdown
-    cummax = np.maximum.accumulate(equity_curve)
-    drawdown = (equity_curve - cummax) / cummax * 100
-    axes[1].fill_between(dates, drawdown, 0, color='red', alpha=0.3)
-    axes[1].plot(dates, drawdown, color='darkred', linewidth=1)
+    cummax = np.maximum.accumulate(plot_equity)
+    drawdown = (plot_equity - cummax) / cummax * 100
+    axes[1].fill_between(plot_dates, drawdown, 0, color='red', alpha=0.3)
+    axes[1].plot(plot_dates, drawdown, color='darkred', linewidth=1)
     axes[1].set_title(f'Drawdown - Max: {metrics["max_drawdown"]:.2f}%', fontsize=14, fontweight='bold')
     axes[1].set_ylabel('Drawdown (%)', fontsize=12)
     axes[1].grid(True, alpha=0.3)
 
     # Positions
-    axes[2].fill_between(dates, positions, 0, alpha=0.3, color='blue')
+    axes[2].fill_between(plot_dates, plot_positions, 0, alpha=0.3, color='blue')
     axes[2].set_title(f'Positions - Long: {metrics["long_percentage"]:.1f}%', fontsize=14, fontweight='bold')
     axes[2].set_ylabel('Position', fontsize=12)
     axes[2].set_xlabel('Date', fontsize=12)
@@ -217,10 +222,16 @@ def print_metrics(metrics, title="EVALUATION RESULTS"):
 
 def main():
     parser = argparse.ArgumentParser(description='Evaluate Trained DreamerV3 Model')
-    parser.add_argument('--checkpoint', type=str, default='train/dreamer_ultimate/ultimate_150_xauusd_final.pt',
+    parser.add_argument('--checkpoint', type=str, default='train/dreamer/dreamer_xauusd_final.pt',
                        help='Path to model checkpoint')
-    parser.add_argument('--period', type=str, default='validation', choices=['validation', 'test', 'all'],
-                       help='Evaluation period (validation=2022-2023, test=2024-2025, all=everything)')
+    parser.add_argument('--period', type=str, default='forward', choices=['validation', 'test', 'forward', 'all'],
+                       help='Evaluation period (forward=2026-01-01 to 2026-08-01)')
+    parser.add_argument('--train-cutoff', type=str, default='2026-01-01',
+                       help='Date used to compute train-only normalization statistics')
+    parser.add_argument('--forward-start', type=str, default='2026-01-01',
+                       help='Forward-test start date')
+    parser.add_argument('--forward-end', type=str, default='2026-08-01',
+                       help='Forward-test end date')
     parser.add_argument('--save-plot', type=str, default='evaluation_results.png',
                        help='Path to save results plot')
 
@@ -233,6 +244,17 @@ def main():
     logger.info(f"✅ Loaded {X.shape[1]} features, {len(X):,} samples")
     logger.info(f"📅 Date range: {timestamps[0]} to {timestamps[-1]}")
 
+    # Train-only normalization to match training-time preprocessing.
+    train_cutoff = np.datetime64(args.train_cutoff)
+    train_idx = np.searchsorted(timestamps, train_cutoff, side='left')
+    if train_idx <= 0:
+        train_idx = len(X) // 2
+
+    feature_mean = X[:train_idx].mean(axis=0, keepdims=True)
+    feature_std = X[:train_idx].std(axis=0, keepdims=True)
+    feature_std = np.maximum(feature_std, 1e-6)
+    X = (X - feature_mean) / feature_std
+
     # ========== SELECT PERIOD ==========
     if args.period == 'validation':
         # 2022-2023
@@ -242,6 +264,9 @@ def main():
         # 2024-2025
         mask = (timestamps >= '2024-01-01')
         period_name = "TEST (2024-2025)"
+    elif args.period == 'forward':
+        mask = (timestamps >= args.forward_start) & (timestamps < args.forward_end)
+        period_name = f"FORWARD ({args.forward_start} to {args.forward_end})"
     else:
         # All data
         mask = np.ones(len(timestamps), dtype=bool)

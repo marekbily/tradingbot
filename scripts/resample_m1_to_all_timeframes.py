@@ -7,6 +7,7 @@ Converts M1 (1-minute) XAUUSD data to:
 - H1 (1-hour)
 - H4 (4-hour)
 - D1 (Daily)
+- W1 (Weekly)
 
 This maximizes the value of your high-resolution M1 data.
 """
@@ -119,11 +120,12 @@ def main():
     logger.info("\n📊 Resampling to multiple timeframes...\n")
 
     timeframes = {
-        'M5': ('5T', 'xauusd_m5.csv'),
-        'M15': ('15T', 'xauusd_m15.csv'),
-        'H1': ('1H', 'xauusd_h1_from_m1.csv'),
-        'H4': ('4H', 'xauusd_h4_from_m1.csv'),
-        'D1': ('1D', 'xauusd_d1_from_m1.csv'),
+        'M5': ('5min', 'xauusd_m5.csv'),
+        'M15': ('15min', 'xauusd_m15.csv'),
+        'H1': ('1h', 'xauusd_h1_from_m1.csv'),
+        'H4': ('4h', 'xauusd_h4_from_m1.csv'),
+        'D1': ('1d', 'xauusd_d1_from_m1.csv'),
+        'W1': ('1w', 'xauusd_w1.csv'),
     }
 
     results = {}

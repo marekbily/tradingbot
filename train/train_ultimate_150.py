@@ -36,10 +36,10 @@ COST = 0.0001
 TRAIN_END_DATE = "2022-01-01"
 
 # DreamerV3 hyperparameters
-BATCH_SIZE = 16
+BATCH_SIZE = 128
 PREFILL_STEPS = 5_000  # Random exploration to fill buffer
-TRAIN_STEPS = 1_000_000  # Training steps
-TRAIN_EVERY = 4  # Train every N environment steps
+TRAIN_STEPS = 1_000_000  # Training steps (updated to 1M)
+TRAIN_EVERY = 8  # Train every N environment steps
 SAVE_EVERY = 10_000
 
 SAVE_DIR = "train/dreamer_ultimate"
@@ -50,9 +50,10 @@ class TradingEnvironment:
     """
     Trading environment for DreamerV3 with Ultimate 150+ features
     """
-    def __init__(self, features, returns, window=64, cost_per_trade=0.0001):
-        self.X = features.astype(np.float32)
-        self.r = returns.astype(np.float32)
+    def __init__(self, features, returns, window=64, cost_per_trade=0.0001, device='cpu'):
+        self.device = torch.device(device)
+        self.X = torch.tensor(features, dtype=torch.float32, device=self.device)
+        self.r = torch.tensor(returns, dtype=torch.float32, device=self.device)
         self.window = int(window)
         self.cost = float(cost_per_trade)
         self.T = len(self.r)
@@ -83,12 +84,11 @@ class TradingEnvironment:
             - Current position
         """
         # Get window of features
-        w = self.X[self.t - self.window : self.t]  # (window, num_features)
+        w = self.X[self.t - self.window : self.t].reshape(-1)
+        pos_tensor = torch.tensor([self.pos], dtype=torch.float32, device=self.device)
+        obs = torch.cat([w, pos_tensor])
 
-        # Flatten
-        obs = np.concatenate([w.reshape(-1), np.array([self.pos], dtype=np.float32)])
-
-        return obs.astype(np.float32)
+        return obs
 
     def step(self, action_onehot):
         """
@@ -101,7 +101,9 @@ class TradingEnvironment:
             obs, reward, done, info
         """
         # Decode action (for long-only: 0=flat, 1=long)
-        new_pos = int(np.argmax(action_onehot))  # 0 or 1
+        if not torch.is_tensor(action_onehot):
+            action_onehot = torch.tensor(action_onehot, dtype=torch.float32, device=self.device)
+        new_pos = int(torch.argmax(action_onehot).item())  # 0 or 1
 
         # Ensure long-only
         new_pos = max(0, min(1, new_pos))
@@ -117,24 +119,24 @@ class TradingEnvironment:
         pnl = self.pos * ret - trade_cost
 
         # Update state
-        self.equity *= (1 + pnl)
+        self.equity *= float((1 + pnl).item())
         self.pos = new_pos
         self.t += 1
 
         # Reward
         reward = pnl
 
-        # Done
-        done = (self.t >= self.T - 1)
+        # Done once we have consumed the final bar.
+        done = (self.t >= self.T)
 
         # Next observation
-        obs = self._get_obs() if not done else np.zeros_like(self._get_obs())
+        obs = self._get_obs() if not done else torch.zeros_like(self._get_obs())
 
         info = {
             'equity': self.equity,
             'position': self.pos,
-            'pnl': pnl,
-            'return': ret
+            'pnl': float(pnl.item()),
+            'return': float(ret.item())
         }
 
         return obs, reward, done, info
@@ -169,6 +171,19 @@ def main():
     logger.info(f"Base timeframe: {args.base_tf}")
     logger.info("")
 
+    # ========== DEVICE SETUP ==========
+    if args.device == 'auto':
+        if torch.cuda.is_available():
+            device = 'cuda'
+        elif torch.backends.mps.is_available():
+            device = 'mps'
+        else:
+            device = 'cpu'
+    else:
+        device = args.device
+
+    logger.info(f"\n🖥️  Using device: {device}")
+
     # ========== LOAD ULTIMATE FEATURES ==========
     logger.info("📊 Loading Ultimate 150+ features...")
     logger.info("-" * 70)
@@ -183,37 +198,39 @@ def main():
     # ========== SPLIT TRAIN/VAL ==========
     logger.info("\n📅 Splitting train/validation...")
 
-    # Find split index
-    train_mask = timestamps < TRAIN_END_DATE
-    train_idx = np.where(train_mask)[0][-1] if train_mask.any() else len(X) // 2
+    # Find split index and keep the split leakage-free.
+    train_cutoff = np.datetime64(TRAIN_END_DATE)
+    train_idx = np.searchsorted(timestamps, train_cutoff, side='left')
+    if train_idx <= 0:
+        train_idx = len(X) // 2
 
     X_train = X[:train_idx]
     r_train = returns[:train_idx]
+    X_test = X[train_idx:]
+    r_test = returns[train_idx:]
+
+    # Train-only normalization to avoid lookahead leakage.
+    feature_mean = X_train.mean(axis=0, keepdims=True)
+    feature_std = X_train.std(axis=0, keepdims=True)
+    feature_std = np.maximum(feature_std, 1e-6)
+    X_train = (X_train - feature_mean) / feature_std
+    if len(X_test) > 0:
+        X_test = (X_test - feature_mean) / feature_std
 
     logger.info(f"  • Train samples: {len(X_train):,}")
     logger.info(f"  • Train period: {timestamps[0]} to {timestamps[train_idx-1]}")
+    if len(X_test) > 0:
+        logger.info(f"  • Validation samples: {len(X_test):,}")
+        logger.info(f"  • Validation period: {timestamps[train_idx]} to {timestamps[-1]}")
 
     # ========== CREATE ENVIRONMENT ==========
     logger.info("\n🎮 Creating trading environment...")
 
-    env = TradingEnvironment(X_train, r_train, window=WINDOW, cost_per_trade=COST)
+    env = TradingEnvironment(X_train, r_train, window=WINDOW, cost_per_trade=COST, device=device)
 
     logger.info(f"\n✅ Environment ready:")
     logger.info(f"  • Observation dim: {env.observation_space}")
     logger.info(f"  • Action dim: {env.action_space}")
-
-    # ========== DEVICE SETUP ==========
-    if args.device == 'auto':
-        if torch.cuda.is_available():
-            device = 'cuda'
-        elif torch.backends.mps.is_available():
-            device = 'mps'
-        else:
-            device = 'cpu'
-    else:
-        device = args.device
-
-    logger.info(f"\n🖥️  Using device: {device}")
 
     # ========== CREATE AGENT ==========
     logger.info("\n🤖 Creating DreamerV3 agent...")
@@ -239,8 +256,8 @@ def main():
     obs = env.reset()
     for _ in tqdm(range(PREFILL_STEPS), desc="Prefill"):
         # Random action
-        action = np.random.randint(0, env.action_space)
-        action_onehot = np.eye(env.action_space)[action]
+        action_idx = torch.randint(0, env.action_space, (1,), device=device)
+        action_onehot = torch.nn.functional.one_hot(action_idx, num_classes=env.action_space).float()[0]
 
         # Step
         next_obs, reward, done, info = env.step(action_onehot)
@@ -271,18 +288,14 @@ def main():
         # Select action from agent (returns action and updated hidden state)
         action, (h, z) = agent.act(obs, h, z, deterministic=False)
 
-        # Convert to discrete action index
-        action_idx = np.argmax(action)
-        action_onehot = np.eye(env.action_space)[action_idx]
-
         # Environment step
-        next_obs, reward, done, info = env.step(action_onehot)
+        next_obs, reward, done, info = env.step(action)
 
         # Store transition
-        agent.replay_buffer.add(obs, action_onehot, reward, done)
+        agent.replay_buffer.add(obs, action, reward, done)
 
         # Accumulate reward
-        episode_reward += reward
+        episode_reward += float(reward.item())
 
         # Train agent every few steps
         if step % TRAIN_EVERY == 0:

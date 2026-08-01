@@ -236,8 +236,9 @@ def test_microstructure_features():
     try:
         # Load gold data
         logger.info("\n1️⃣ Loading gold data...")
-        df_gold = pd.read_csv('data/xauusd_m5.csv')
-        df_gold['time'] = pd.to_datetime(df_gold['time'])
+        from data.load_data import load_ohlc_csv
+
+        df_gold = load_ohlc_csv('data/xauusd_m5.csv')
         df_gold = df_gold.set_index('time').sort_index()
 
         logger.info("\n2️⃣ Computing microstructure features...")
@@ -276,8 +277,9 @@ if __name__ == "__main__":
     from features.microstructure_features import compute_all_microstructure_features
 
     # Load data with OHLCV and DatetimeIndex
-    df = pd.read_csv('data/xauusd_m5.csv')
-    df['time'] = pd.to_datetime(df['time'])
+    from data.load_data import load_ohlc_csv
+
+    df = load_ohlc_csv('data/xauusd_m5.csv')
     df = df.set_index('time')
 
     # Compute microstructure features

@@ -20,17 +20,28 @@ import numpy as np
 import logging
 from pathlib import Path
 
+from data.load_data import load_ohlc_csv
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def make_ultimate_features(base_timeframe='M5', data_dir='data'):
+def make_ultimate_features(
+    base_timeframe='M5',
+    data_dir='data',
+    start_date=None,
+    end_date=None,
+    warmup_days=30,
+) -> tuple[np.ndarray, np.ndarray, pd.DatetimeIndex]:
     """
     Create complete 150+ feature set
 
     Args:
         base_timeframe: Base timeframe to use ('M5' recommended for speed)
         data_dir: Directory containing data files
+        start_date: Optional inclusive start date for the final output window
+        end_date: Optional exclusive end date for the final output window
+        warmup_days: Extra lookback window to keep before start_date for rolling indicators
 
     Returns:
         features (ndarray): Shape (N, 152+), dtype float32
@@ -42,7 +53,13 @@ def make_ultimate_features(base_timeframe='M5', data_dir='data'):
     logger.info("="*70)
     logger.info(f"Base timeframe: {base_timeframe}")
     logger.info(f"Data directory: {data_dir}")
+    if start_date is not None or end_date is not None:
+        logger.info(f"Date window: {start_date} -> {end_date} (warmup {warmup_days} days)")
     logger.info("")
+
+    load_start = start_date
+    if start_date is not None and warmup_days:
+        load_start = pd.Timestamp(start_date) - pd.Timedelta(days=warmup_days)
 
     # ========== STEP 1: LOAD TIMEFRAME FEATURES (96) ==========
     logger.info("📊 STEP 1/5: Loading timeframe features...")
@@ -52,7 +69,9 @@ def make_ultimate_features(base_timeframe='M5', data_dir='data'):
 
     tf_features = load_and_compute_all_timeframes(
         base_timeframe=base_timeframe,
-        data_dir=data_dir
+        data_dir=data_dir,
+        start_date=load_start,
+        end_date=end_date,
     )
 
     logger.info(f"✅ Loaded {len(tf_features)} timeframes")
@@ -82,8 +101,11 @@ def make_ultimate_features(base_timeframe='M5', data_dir='data'):
         'H1': 'xauusd_h1_from_m1.csv',
     }.get(base_timeframe, 'xauusd_m5.csv')
 
-    df_gold = pd.read_csv(f"{data_dir}/{base_data_file}")
-    df_gold['time'] = pd.to_datetime(df_gold['time'])
+    df_gold = load_ohlc_csv(f"{data_dir}/{base_data_file}")
+    if load_start is not None:
+        df_gold = df_gold[df_gold['time'] >= pd.Timestamp(load_start)]
+    if end_date is not None:
+        df_gold = df_gold[df_gold['time'] < pd.Timestamp(end_date)]
     df_gold = df_gold.set_index('time').sort_index()
 
     macro_data = load_macro_data(data_dir=data_dir)
@@ -101,6 +123,11 @@ def make_ultimate_features(base_timeframe='M5', data_dir='data'):
 
     # Use the base timeframe index
     base_index = tf_features[base_timeframe].index
+
+    if start_date is not None:
+        base_index = base_index[base_index >= pd.Timestamp(start_date)]
+    if end_date is not None:
+        base_index = base_index[base_index < pd.Timestamp(end_date)]
 
     calendar_features = compute_calendar_features(base_index, calendar)
 

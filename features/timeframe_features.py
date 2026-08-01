@@ -15,6 +15,8 @@ import numpy as np
 import logging
 from pathlib import Path
 
+from data.load_data import load_ohlc_csv
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -178,7 +180,7 @@ def compute_bb_position(prices, period=20, num_std=2):
     return bb_position.fillna(0.5)
 
 
-def load_timeframe_data(filepath):
+def load_timeframe_data(filepath, start_date=None, end_date=None):
     """
     Load a single timeframe data file
 
@@ -188,19 +190,24 @@ def load_timeframe_data(filepath):
     Returns:
         DataFrame with datetime index
     """
-    df = pd.read_csv(filepath)
+    df = load_ohlc_csv(filepath)
 
-    # Convert time to datetime
-    df['time'] = pd.to_datetime(df['time'])
-    df = df.set_index('time')
-    df = df.sort_index()
+    if start_date is not None:
+        start_ts = pd.Timestamp(start_date)
+        df = df[df['time'] >= start_ts]
 
-    # Ensure we have required columns
-    required = ['open', 'high', 'low', 'close', 'volume']
-    for col in required:
-        if col not in df.columns:
-            raise ValueError(f"Missing required column: {col}")
+    if end_date is not None:
+        end_ts = pd.Timestamp(end_date)
+        df = df[df['time'] < end_ts]
 
+    # Normalize volume column name for downstream feature code
+    if 'volume' not in df.columns:
+        if 'tick_volume' in df.columns:
+            df = df.rename(columns={'tick_volume': 'volume'})
+        else:
+            df['volume'] = 0.0
+
+    df = df.set_index('time').sort_index()
     return df
 
 
@@ -233,7 +240,7 @@ def align_timeframes(tf_dict, base_timeframe='M5'):
     return aligned
 
 
-def load_and_compute_all_timeframes(base_timeframe='M5', data_dir='data'):
+def load_and_compute_all_timeframes(base_timeframe='M5', data_dir='data', start_date=None, end_date=None):
     """
     Load all timeframe data and compute features
 
@@ -275,7 +282,7 @@ def load_and_compute_all_timeframes(base_timeframe='M5', data_dir='data'):
 
         # Load data
         logger.info(f"\n📥 Loading {tf_name} from {filename}...")
-        df = load_timeframe_data(filepath)
+        df = load_timeframe_data(filepath, start_date=start_date, end_date=end_date)
         logger.info(f"   ✅ Loaded {len(df):,} bars")
 
         # Compute features

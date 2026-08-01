@@ -69,24 +69,69 @@ class GRUCell(nn.Module):
 
 
 class Encoder(nn.Module):
-    """Encodes observations into embeddings"""
-    def __init__(self, obs_dim, embed_dim=256):
+    """Encodes observations into embeddings.
+
+    Two modes:
+    - Flat: original MLP that takes a flattened observation vector.
+    - Temporal pooled: when `window` and `feats` are provided, the encoder
+      applies a small MLP per time-step (shared), pools across the window,
+      and projects to `embed_dim`. This drastically reduces compute for
+      large flattened inputs like (window * num_features).
+    """
+    def __init__(self, obs_dim, embed_dim=256, window: int = None, feats: int = None):
         super().__init__()
-        self.net = nn.Sequential(
-            nn.Linear(obs_dim, 512),
-            RMSNorm(512),
-            nn.SiLU(),
-            nn.Linear(512, 512),
-            RMSNorm(512),
-            nn.SiLU(),
-            nn.Linear(512, embed_dim),
-            RMSNorm(embed_dim),
-        )
+        self.window = window
+        self.feats = feats
+        self.embed_dim = embed_dim
+
+        # If window and feats provided and match obs_dim, use temporal pooled encoder
+        if self.window is not None and self.feats is not None and (self.window * self.feats + 1) == obs_dim:
+            # per-time-step embedding
+            per_hidden = 128
+            self.temporal = True
+            self.per_step = nn.Sequential(
+                nn.Linear(self.feats, per_hidden),
+                RMSNorm(per_hidden),
+                nn.SiLU(),
+            )
+            # aggregate pooled embedding to final embed_dim
+            self.aggregate = nn.Sequential(
+                nn.Linear(per_hidden, embed_dim),
+                RMSNorm(embed_dim),
+                nn.SiLU(),
+            )
+        else:
+            self.temporal = False
+            self.net = nn.Sequential(
+                nn.Linear(obs_dim, 512),
+                RMSNorm(512),
+                nn.SiLU(),
+                nn.Linear(512, 512),
+                RMSNorm(512),
+                nn.SiLU(),
+                nn.Linear(512, embed_dim),
+                RMSNorm(embed_dim),
+            )
 
     def forward(self, obs):
         # Apply symlog to observations for stability
         obs = symlog(obs)
-        return self.net(obs)
+        if self.temporal:
+            # obs: (N, obs_dim) where obs_dim = window * feats + 1 (position)
+            # split features and position
+            feats_flat = obs[:, : self.window * self.feats]
+            # reshape to (N, window, feats) using reshape (safe for torch.compile)
+            feats_seq = feats_flat.reshape(-1, self.window, self.feats)
+            # apply per-step MLP
+            N = feats_seq.shape[0]
+            per = self.per_step(feats_seq.reshape(-1, self.feats))
+            per = per.view(N, self.window, -1)
+            # pool across time
+            pooled = per.mean(dim=1)
+            out = self.aggregate(pooled)
+            return out
+        else:
+            return self.net(obs)
 
 
 class RSSM(nn.Module):
@@ -120,9 +165,9 @@ class RSSM(nn.Module):
             nn.Linear(512, stoch_dim * num_categories)
         )
 
-        # Dynamics: h_t = f(h_{t-1}, z_{t-1}, a_{t-1})
+        # Dynamics: use a cuDNN-backed GRU for vectorized recurrence
         # stoch_dim * num_categories because z is flattened one-hot
-        self.gru = GRUCell(stoch_dim * num_categories + action_dim, hidden_dim)
+        self.gru = nn.GRU(input_size=stoch_dim * num_categories + action_dim, hidden_size=hidden_dim, batch_first=True)
 
     def initial_state(self, batch_size, device):
         """Initialize h_0 and z_0"""
@@ -131,13 +176,68 @@ class RSSM(nn.Module):
         z = torch.zeros(batch_size, self.stoch_dim * self.num_categories, device=device)
         return h, z
 
+    def observe_sequence(self, embed_seq, action_seq, h0=None, n_iter=2):
+        """
+        Vectorized observation over a full sequence using iterative posterior refinement.
+
+        Args:
+            embed_seq: (B, T, embed_dim)
+            action_seq: (B, T, action_dim)
+            h0: (B, hidden_dim) initial hidden state, zeros if None
+            n_iter: number of refinement passes (2 is a good tradeoff)
+
+        Returns:
+            h_seq: (B, T, hidden_dim)
+            z_flat: (B, T, stoch_dim * num_categories) -- soft posterior probs
+            prior_logits: (B, T, stoch_dim, num_categories)
+            posterior_logits: (B, T, stoch_dim, num_categories)
+        """
+        B, T, _ = embed_seq.shape
+        device = embed_seq.device
+
+        if h0 is None:
+            h0 = torch.zeros(B, self.hidden_dim, device=device)
+
+        # initialize soft z to zeros
+        z_shape = (B, T, self.stoch_dim * self.num_categories)
+        z_soft = torch.zeros(z_shape, device=device)
+
+        for _ in range(n_iter):
+            # build z_prev_shift where for time t we provide z_{t-1} (zero for t=0)
+            z_prev_shift = torch.zeros_like(z_soft)
+            z_prev_shift[:, 1:, :] = z_soft[:, :-1, :]
+
+            # inputs: concat(z_prev_shift, actions) -> (B, T, input_size)
+            inputs = torch.cat([z_prev_shift, action_seq], dim=-1)
+
+            # run GRU over the whole sequence
+            # GRU expects input (B, T, input_size). initial hidden must be (num_layers, B, hidden)
+            h_seq, _ = self.gru(inputs, h0.unsqueeze(0))
+
+            # compute posterior logits from h_seq and embeds
+            hp = torch.cat([h_seq, embed_seq], dim=-1).reshape(B * T, -1)
+            posterior_logits = self.posterior_net(hp).reshape(B, T, self.stoch_dim, self.num_categories)
+
+            # soft posterior (probabilities)
+            posterior_probs = torch.softmax(posterior_logits, dim=-1)
+            z_soft = posterior_probs.reshape(B, T, -1)
+
+        # final prior logits from h_seq
+        prior_logits = self.prior_net(h_seq.reshape(B * T, -1)).reshape(B, T, self.stoch_dim, self.num_categories)
+
+        return h_seq, z_soft, prior_logits, posterior_logits
+
     def observe(self, embed, action, h_prev, z_prev):
         """
         Posterior inference: q(z_t | h_t, e_t)
         Used during training with real observations
         """
-        # Update deterministic state
-        h = self.gru(torch.cat([z_prev, action], dim=-1), h_prev)
+        # Update deterministic state using GRU for a single step.
+        # GRU returns (output_seq, h_n) when used; unpack correctly.
+        inp = torch.cat([z_prev, action], dim=-1).unsqueeze(1)  # (B, 1, input_size)
+        out_seq, h_n = self.gru(inp, h_prev.unsqueeze(0))
+        # h_n: (num_layers=1, B, hidden_dim) -> squeeze to (B, hidden_dim)
+        h = h_n.squeeze(0)
 
         # Compute posterior distribution
         posterior_logits = self.posterior_net(torch.cat([h, embed], dim=-1))
@@ -157,8 +257,10 @@ class RSSM(nn.Module):
         Prior imagination: p(z_t | h_t)
         Used for dreaming/planning without real observations
         """
-        # Update deterministic state
-        h = self.gru(torch.cat([z_prev, action], dim=-1), h_prev)
+        # Update deterministic state for a single step using GRU
+        inp = torch.cat([z_prev, action], dim=-1).unsqueeze(1)
+        out_seq, h_n = self.gru(inp, h_prev.unsqueeze(0))
+        h = h_n.squeeze(0)
 
         # Sample from prior
         prior_logits = self.prior_net(h)
@@ -166,6 +268,68 @@ class RSSM(nn.Module):
         z = self._sample_categorical(prior_logits)
 
         return h, z, prior_logits
+
+    def imagine_sequence(self, h0, z0, horizon, actor, reward_predictor, critic, deterministic=False):
+        """
+        Vectorized imagination loop executed inside RSSM to reduce Python overhead.
+
+        Args:
+            h0, z0: starting latent states (B, hidden), (B, z_flat)
+            horizon: number of imagine steps
+            actor: callable actor module (expects state -> logits)
+            reward_predictor: reward module
+            critic: value module
+            deterministic: if True use greedy actions
+
+        Returns: states, rewards, actor_logits, values
+        """
+        B = h0.shape[0]
+        device = h0.device
+        state_dim = h0.shape[1] + z0.shape[1]
+
+        states = torch.empty((B, horizon, state_dim), device=device)
+        rewards = torch.empty((B, horizon), device=device)
+        actor_dim = getattr(actor, 'action_dim', None)
+        if actor_dim is None and hasattr(actor, 'net'):
+            # try to infer from last linear layer
+            try:
+                actor_dim = actor.net[-1].out_features
+            except Exception:
+                actor_dim = 3
+        actor_logits = torch.empty((B, horizon, actor_dim), device=device)
+
+        h = h0
+        z = z0
+
+        for t in range(horizon):
+            state = self.get_state(h, z)
+            states[:, t, :] = state
+
+            # Detach state before passing to reward/actor so their graphs do not
+            # connect back to the RSSM/world-model. This avoids cross-phase
+            # gradient conflicts when we run multiple backward() passes.
+            state_det = state.detach()
+            reward_pred = reward_predictor(state_det)
+            rewards[:, t] = symexp(reward_pred)
+
+            logits = actor(state_det)
+            actor_logits[:, t, :] = logits
+
+            # sample or take greedy action
+            if deterministic:
+                action = F.one_hot(logits.argmax(dim=-1), logits.shape[-1]).float()
+            else:
+                dist = torch.distributions.Categorical(logits=logits)
+                idx = dist.sample()
+                action = F.one_hot(idx, logits.shape[-1]).float()
+
+            # imagine next state using prior
+            h, z, _ = self.imagine(action, h, z)
+
+        # compute values in one batch
+        values = critic(states.reshape(B * horizon, -1)).reshape(B, horizon)
+
+        return states, rewards, actor_logits, values
 
     def _sample_categorical(self, logits):
         """Sample from categorical distribution with straight-through estimator"""

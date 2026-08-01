@@ -123,8 +123,8 @@ def compute_rolling_correlation(series1, series2, window=120):
         Rolling correlation series
     """
     # Compute returns
-    ret1 = series1.pct_change()
-    ret2 = series2.pct_change()
+    ret1 = series1.pct_change(fill_method=None)
+    ret2 = series2.pct_change(fill_method=None)
 
     # Rolling correlation
     corr = ret1.rolling(window).corr(ret2)
@@ -147,10 +147,10 @@ def compute_dxy_features(gold_prices, dxy_prices):
     dxy_aligned = normalize_timezone(dxy_prices, gold_prices.index)
 
     # Feature 1: DXY return
-    result['dxy_return'] = dxy_aligned.pct_change()
+    result['dxy_return'] = dxy_aligned.pct_change(fill_method=None)
 
     # Feature 2: DXY momentum (20-day)
-    result['dxy_momentum'] = dxy_aligned.pct_change(20)
+    result['dxy_momentum'] = dxy_aligned.pct_change(20, fill_method=None)
 
     # Feature 3: Gold-DXY correlation
     result['gold_dxy_correlation'] = compute_rolling_correlation(
@@ -175,10 +175,10 @@ def compute_spx_features(gold_prices, spx_prices):
     spx_aligned = normalize_timezone(spx_prices, gold_prices.index)
 
     # Feature 1: SPX return
-    result['spx_return'] = spx_aligned.pct_change()
+    result['spx_return'] = spx_aligned.pct_change(fill_method=None)
 
     # Feature 2: SPX momentum (20-day)
-    result['spx_momentum'] = spx_aligned.pct_change(20)
+    result['spx_momentum'] = spx_aligned.pct_change(20, fill_method=None)
 
     # Feature 3: Gold-SPX correlation
     result['gold_spx_correlation'] = compute_rolling_correlation(
@@ -257,10 +257,10 @@ def compute_oil_features(gold_prices, oil_prices):
     oil_aligned = normalize_timezone(oil_prices, gold_prices.index)
 
     # Feature 1: Oil return
-    result['oil_return'] = oil_aligned.pct_change()
+    result['oil_return'] = oil_aligned.pct_change(fill_method=None)
 
     # Feature 2: Oil momentum (20-day)
-    result['oil_momentum'] = oil_aligned.pct_change(20)
+    result['oil_momentum'] = oil_aligned.pct_change(20, fill_method=None)
 
     # Feature 3: Gold-Oil correlation
     result['gold_oil_correlation'] = compute_rolling_correlation(
@@ -285,10 +285,10 @@ def compute_btc_features(gold_prices, btc_prices):
     btc_aligned = normalize_timezone(btc_prices, gold_prices.index)
 
     # Feature 1: BTC return
-    result['btc_return'] = btc_aligned.pct_change()
+    result['btc_return'] = btc_aligned.pct_change(fill_method=None)
 
     # Feature 2: BTC momentum (20-day)
-    result['btc_momentum'] = btc_aligned.pct_change(20)
+    result['btc_momentum'] = btc_aligned.pct_change(20, fill_method=None)
 
     # Feature 3: Gold-BTC correlation
     result['gold_btc_correlation'] = compute_rolling_correlation(
@@ -313,10 +313,10 @@ def compute_eur_features(gold_prices, eur_prices):
     eur_aligned = normalize_timezone(eur_prices, gold_prices.index)
 
     # Feature 1: EUR return
-    result['eur_return'] = eur_aligned.pct_change()
+    result['eur_return'] = eur_aligned.pct_change(fill_method=None)
 
     # Feature 2: EUR momentum (20-day)
-    result['eur_momentum'] = eur_aligned.pct_change(20)
+    result['eur_momentum'] = eur_aligned.pct_change(20, fill_method=None)
 
     # Feature 3: Gold-EUR correlation
     result['gold_eur_correlation'] = compute_rolling_correlation(
@@ -353,7 +353,7 @@ def compute_silver_gld_features(gold_prices, silver_prices, gld_prices):
     # Feature 3: GLD flow proxy (using daily returns as proxy)
     if gld_prices is not None:
         gld_aligned = normalize_timezone(gld_prices, gold_prices.index)
-        result['gld_flow'] = gld_aligned.pct_change()
+        result['gld_flow'] = gld_aligned.pct_change(fill_method=None)
     else:
         result['gld_flow'] = 0.0
 

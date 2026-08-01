@@ -38,12 +38,12 @@ def load_economic_calendar(filepath='data/economic_events_2015_2025.json'):
     with open(filepath, 'r') as f:
         events = json.load(f)
 
-    # Convert datetime strings to datetime objects and rename to 'time'
+    # Convert datetime strings to normalized timestamps and rename to 'time'
     for event in events:
-        event['time'] = pd.to_datetime(event['datetime'])
-        # Keep datetime for backward compatibility if needed
-        if 'datetime' in event and 'time' not in event:
-            event['time'] = event['datetime']
+        event['time'] = pd.to_datetime(event['datetime'], utc=True).tz_localize(None)
+
+    # Keep events sorted so downstream searchsorted lookups are valid.
+    events.sort(key=lambda event: event['time'])
 
     logger.info(f"   ✅ Loaded {len(events)} economic events")
 
@@ -139,89 +139,67 @@ def compute_calendar_features(df_timestamps, calendar):
 
     logger.info(f"Processing {len(df_timestamps):,} timestamps...")
 
-    # Initialize result arrays
-    hours_to_event = []
-    days_since_event = []
-    event_density = []
-    is_high_impact = []
-    in_event_window = []
-    event_volatility_expected = []
-    event_type_nfp = []
-    event_type_fomc = []
+    timestamps = pd.DatetimeIndex(df_timestamps)
+    if timestamps.tz is not None:
+        timestamps = timestamps.tz_convert('UTC').tz_localize(None)
 
-    # Process each timestamp
-    for i, ts in enumerate(df_timestamps):
-        if i % 10000 == 0:
-            logger.info(f"   Processing: {i:,} / {len(df_timestamps):,}")
+    event_times = pd.DatetimeIndex(pd.to_datetime([event['time'] for event in calendar]))
+    if event_times.tz is not None:
+        event_times = event_times.tz_convert('UTC').tz_localize(None)
+    event_times_ns = event_times.to_numpy(dtype='datetime64[ns]').astype('int64')
+    event_names = np.asarray([str(event.get('event', '')) for event in calendar], dtype=object)
+    event_impacts = np.asarray([str(event.get('impact', 'MEDIUM')).upper() for event in calendar], dtype=object)
 
-        # Find next event
-        next_event = find_next_event(ts, calendar)
+    ts_ns = timestamps.to_numpy(dtype='datetime64[ns]').astype('int64')
+    one_week_ns = int(pd.Timedelta(days=7).value)
 
-        if next_event:
-            # Feature 1: Hours to next event
-            time_diff = (next_event['time'] - ts).total_seconds() / 3600.0
-            hours_to_event.append(min(time_diff, 168.0))  # Cap at 1 week
+    next_idx = np.searchsorted(event_times_ns, ts_ns, side='right')
+    valid_next = next_idx < len(event_times_ns)
+    clipped_next = np.clip(next_idx, 0, max(len(event_times_ns) - 1, 0))
 
-            # Feature 4: Is high impact
-            is_high = 1.0 if next_event.get('impact', 'MEDIUM') == 'HIGH' else 0.0
-            is_high_impact.append(is_high)
+    prev_idx = next_idx - 1
+    valid_prev = prev_idx >= 0
+    clipped_prev = np.clip(prev_idx, 0, max(len(event_times_ns) - 1, 0))
 
-            # Feature 5: In event window (±2 hours)
-            in_window = 1.0 if abs(time_diff) <= 2.0 else 0.0
-            in_event_window.append(in_window)
+    hours_to_event = np.full(len(ts_ns), 168.0, dtype=np.float32)
+    if len(event_times_ns) > 0:
+        next_deltas_hours = (event_times_ns[clipped_next] - ts_ns) / 3_600_000_000_000.0
+        hours_to_event[valid_next] = np.minimum(next_deltas_hours[valid_next], 168.0)
 
-            # Feature 6: Expected volatility multiplier
-            if next_event.get('impact', 'MEDIUM') == 'HIGH':
-                vol_mult = 2.0
-            elif next_event.get('impact', 'MEDIUM') == 'MEDIUM':
-                vol_mult = 1.5
-            else:
-                vol_mult = 1.0
-            event_volatility_expected.append(vol_mult)
+    days_since_event = np.full(len(ts_ns), 30.0, dtype=np.float32)
+    if len(event_times_ns) > 0:
+        prev_deltas_days = (ts_ns - event_times_ns[clipped_prev]) / 86_400_000_000_000.0
+        days_since_event[valid_prev] = np.minimum(prev_deltas_days[valid_prev], 30.0)
 
-            # Feature 7-8: Event types
-            event_name = next_event.get('event', '').upper()
-            is_nfp = 1.0 if 'NFP' in event_name or 'NONFARM' in event_name else 0.0
-            is_fomc = 1.0 if 'FOMC' in event_name or 'FEDERAL RESERVE' in event_name else 0.0
-            event_type_nfp.append(is_nfp)
-            event_type_fomc.append(is_fomc)
-        else:
-            # No future events
-            hours_to_event.append(168.0)
-            is_high_impact.append(0.0)
-            in_event_window.append(0.0)
-            event_volatility_expected.append(1.0)
-            event_type_nfp.append(0.0)
-            event_type_fomc.append(0.0)
+    upper_idx = np.searchsorted(event_times_ns, ts_ns + one_week_ns, side='right')
+    event_density = np.minimum((upper_idx - next_idx).astype(np.float32), 10.0)
 
-        # Find last event
-        last_event = find_last_event(ts, calendar)
+    next_impacts = np.full(len(ts_ns), 'MEDIUM', dtype=object)
+    next_names = np.full(len(ts_ns), '', dtype=object)
+    if len(event_times_ns) > 0:
+        next_impacts[valid_next] = event_impacts[clipped_next][valid_next]
+        next_names[valid_next] = event_names[clipped_next][valid_next]
 
-        if last_event:
-            # Feature 2: Days since last event
-            time_since = (ts - last_event['time']).total_seconds() / 86400.0
-            days_since_event.append(min(time_since, 30.0))  # Cap at 30 days
-        else:
-            days_since_event.append(30.0)
+    is_high_impact = (next_impacts == 'HIGH').astype(np.float32)
+    in_event_window = np.where(valid_next, (hours_to_event <= 2.0).astype(np.float32), 0.0)
+    event_volatility_expected = np.select(
+        [next_impacts == 'HIGH', next_impacts == 'MEDIUM'],
+        [2.0, 1.5],
+        default=1.0,
+    ).astype(np.float32)
 
-        # Feature 3: Event density (upcoming events in next 7 days)
-        density = count_upcoming_events(ts, calendar, days=7)
-        event_density.append(min(density, 10.0))  # Cap at 10
+    next_name_series = pd.Series(next_names, index=timestamps)
+    event_type_nfp = next_name_series.str.contains('NFP|NONFARM', case=False, na=False, regex=True).astype(np.float32).to_numpy()
+    event_type_fomc = next_name_series.str.contains('FOMC|FEDERAL RESERVE', case=False, na=False, regex=True).astype(np.float32).to_numpy()
 
-    # Assign to result DataFrame
-    result['hours_to_event'] = hours_to_event
-    result['days_since_event'] = days_since_event
-    result['event_density'] = event_density
+    result['hours_to_event'] = hours_to_event / 168.0
+    result['days_since_event'] = days_since_event / 30.0
+    result['event_density'] = event_density / 10.0
     result['is_high_impact'] = is_high_impact
     result['in_event_window'] = in_event_window
     result['event_volatility_expected'] = event_volatility_expected
     result['event_type_nfp'] = event_type_nfp
     result['event_type_fomc'] = event_type_fomc
-
-    # Normalize some features
-    result['hours_to_event'] = result['hours_to_event'] / 168.0  # Normalize to 0-1
-    result['days_since_event'] = result['days_since_event'] / 30.0
-    result['event_density'] = result['event_density'] / 10.0
 
     # Fill any NaNs
     result = result.fillna(0.0)
@@ -264,8 +242,9 @@ def test_calendar_features():
 
         # Load gold data for timestamps
         logger.info("\n2️⃣ Loading gold data for timestamps...")
-        df_gold = pd.read_csv('data/xauusd_m5.csv')
-        df_gold['time'] = pd.to_datetime(df_gold['time'])
+        from data.load_data import load_ohlc_csv
+
+        df_gold = load_ohlc_csv('data/xauusd_m5.csv')
         df_gold = df_gold.set_index('time').sort_index()
 
         # Take a subset for testing (first 10k bars)
