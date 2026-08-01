@@ -1,5 +1,0 @@
-Add backtesting and evaluation scripts for DreamerV3 model
-
-- Implement `run_dreamer_backtest.py` for backtesting a DreamerV3 checkpoint on XAUUSD with detailed metrics.
-- Create `quick_eval_dreamer.py` for a fast evaluation of DreamerV3 checkpoints, focusing on a narrow date window and quick metrics reporting.
-- Introduce `fetch_macro_data.py` to fetch and standardize common macroeconomic data into the repository's data directory.

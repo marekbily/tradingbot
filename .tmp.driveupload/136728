@@ -1,3 +1,0 @@
-0000000000000000000000000000000000000000 5bc230f301dd5120dc8ec60824b8212db2a7b7e2 Marek Bílý <bily1marek@gmail.com> 1785423186 +0200	clone: from https://github.com/marekbily/tradingbot.git
-5bc230f301dd5120dc8ec60824b8212db2a7b7e2 6b6f1bd9e6ea61ee5406f999d5b7a63f46e4f0aa Marek Bílý <bily1marek@gmail.com> 1785427335 +0200	commit: Update deployment guide for ForpsiCloud VPS and add service files for MetaAPI integration
-6b6f1bd9e6ea61ee5406f999d5b7a63f46e4f0aa c07ed0302a2c22fb22d67ec247450e67592ab06d Marek Bílý <bily1marek@gmail.com> 1785617032 +0200	commit: Add backtesting and evaluation scripts for DreamerV3 model
