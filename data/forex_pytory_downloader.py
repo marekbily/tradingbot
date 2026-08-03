@@ -18,6 +18,7 @@ Include currency, impact level, event name, and country consistently.
 from __future__ import annotations
 
 import argparse
+import errno
 import json
 import logging
 import os
@@ -42,7 +43,7 @@ SOURCE_SCRAPERS = {
 
 DEFAULT_SOURCE_TIMEZONE = "auto"
 DEFAULT_OUTPUT_DIR = Path("data") / "economic_calendar"
-DEFAULT_BLOCK_COOLDOWN_SECONDS = 5
+DEFAULT_BLOCK_COOLDOWN_SECONDS = 30
 DEFAULT_SCRAPE_RETRIES = 10
 
 COUNTRY_BY_CURRENCY = {
@@ -209,6 +210,9 @@ def _is_transient_block_error(exc: Exception) -> bool:
 	status_code = getattr(exc, "status_code", None)
 	response = getattr(exc, "response", None)
 	response_status_code = getattr(response, "status_code", None) if response is not None else None
+	errno_value = getattr(exc, "errno", None)
+	if errno_value in {errno.EMFILE, errno.ENFILE}:
+		return True
 
 	if status_code in {403, 408, 429, 502, 503, 504}:
 		return True
@@ -221,6 +225,8 @@ def _is_transient_block_error(exc: Exception) -> bool:
 			"forbidden",
 			"too many requests",
 			"rate limit",
+			"too many open files",
+			"oserror(24)",
 			"cloudflare",
 			"captcha",
 			"temporarily unavailable",
@@ -246,19 +252,35 @@ def _scrape_calendar_with_retry(
 				source_timezone=source_timezone,
 			)
 		except Exception as exc:
-			if _is_transient_block_error(exc) and attempt < max_retries:
-				print(
-					f"Failsafe engaged for {date_text} after attempt {attempt}/{max_retries}; "
-					f"sleeping {block_cooldown_seconds}s before retry"
-				)
-				logger.warning(
-					"Temporary block or rate limit while scraping %s on %s; sleeping %s seconds before retry %s/%s",
-					source,
-					date_text,
-					block_cooldown_seconds,
-					attempt + 1,
-					max_retries,
-				)
+			is_transient_block = _is_transient_block_error(exc)
+			if attempt < max_retries:
+				if is_transient_block:
+					print(
+						f"Failsafe engaged for {date_text} after attempt {attempt}/{max_retries}; "
+						f"cooling down {block_cooldown_seconds}s because the VPS or site is temporarily blocked"
+					)
+					logger.warning(
+						"Temporary block, rate limit, or file-descriptor exhaustion while scraping %s on %s; sleeping %s seconds before retry %s/%s",
+						source,
+						date_text,
+						block_cooldown_seconds,
+						attempt + 1,
+						max_retries,
+					)
+				else:
+					print(
+						f"Scrape retry for {date_text} after attempt {attempt}/{max_retries}; "
+						f"sleeping {block_cooldown_seconds}s before retry"
+					)
+					logger.warning(
+						"Scrape error while fetching %s on %s; sleeping %s seconds before retry %s/%s: %s",
+						source,
+						date_text,
+						block_cooldown_seconds,
+						attempt + 1,
+						max_retries,
+						exc,
+					)
 				time.sleep(block_cooldown_seconds)
 				continue
 
