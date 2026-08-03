@@ -21,6 +21,7 @@ import argparse
 import json
 import logging
 import os
+import time
 from importlib import import_module
 from dataclasses import dataclass
 from datetime import datetime, timezone, timedelta
@@ -41,6 +42,8 @@ SOURCE_SCRAPERS = {
 
 DEFAULT_SOURCE_TIMEZONE = "auto"
 DEFAULT_OUTPUT_DIR = Path("data") / "economic_calendar"
+DEFAULT_BLOCK_COOLDOWN_SECONDS = 5
+DEFAULT_SCRAPE_RETRIES = 10
 
 COUNTRY_BY_CURRENCY = {
 	"USD": "United States",
@@ -201,6 +204,71 @@ def _record_to_dict(record: Any, source: str, source_timezone: str) -> dict[str,
 	return output
 
 
+def _is_transient_block_error(exc: Exception) -> bool:
+	message = str(exc).lower()
+	status_code = getattr(exc, "status_code", None)
+	response = getattr(exc, "response", None)
+	response_status_code = getattr(response, "status_code", None) if response is not None else None
+
+	if status_code in {403, 408, 429, 502, 503, 504}:
+		return True
+	if response_status_code in {403, 408, 429, 502, 503, 504}:
+		return True
+	return any(
+		marker in message
+		for marker in (
+			"403",
+			"forbidden",
+			"too many requests",
+			"rate limit",
+			"cloudflare",
+			"captcha",
+			"temporarily unavailable",
+		)
+	)
+
+
+def _scrape_calendar_with_retry(
+	source: str,
+	date_text: str,
+	timeline: str,
+	source_timezone: str,
+	max_retries: int = DEFAULT_SCRAPE_RETRIES,
+	block_cooldown_seconds: int = DEFAULT_BLOCK_COOLDOWN_SECONDS,
+) -> list[dict[str, Any]]:
+	for attempt in range(1, max_retries + 1):
+		try:
+			print(f"Scrape attempt {attempt}/{max_retries} for {date_text}")
+			return scrape_calendar(
+				source=source,
+				date_text=date_text,
+				timeline=timeline,
+				source_timezone=source_timezone,
+			)
+		except Exception as exc:
+			if _is_transient_block_error(exc) and attempt < max_retries:
+				print(
+					f"Failsafe engaged for {date_text} after attempt {attempt}/{max_retries}; "
+					f"sleeping {block_cooldown_seconds}s before retry"
+				)
+				logger.warning(
+					"Temporary block or rate limit while scraping %s on %s; sleeping %s seconds before retry %s/%s",
+					source,
+					date_text,
+					block_cooldown_seconds,
+					attempt + 1,
+					max_retries,
+				)
+				time.sleep(block_cooldown_seconds)
+				continue
+
+			print(f"Retry exhausted for {date_text}; skipping this day for now and continuing")
+			logger.error("Giving up on %s after %s attempts: %s", date_text, max_retries, exc)
+			return []
+
+	return []
+
+
 def scrape_calendar(
 	source: str = "forex",
 	date_text: str | None = None,
@@ -243,15 +311,20 @@ def scrape_calendar_range(
 
 	all_records: list[dict[str, Any]] = []
 	for day_value in _iter_dates(start_date, end_date):
-		all_records.extend(
-			scrape_calendar(
+		date_text = day_value.strftime("%Y-%m-%d")
+		try:
+			day_records = _scrape_calendar_with_retry(
 				source=source,
-				date_text=day_value.strftime("%Y-%m-%d"),
+				date_text=date_text,
 				timeline=timeline,
 				source_timezone=source_timezone,
 			)
-		)
-		print(f"Successfully scraped {day_value:%Y-%m-%d}")
+		except Exception as exc:
+			logger.error("Failed to scrape %s after retries: %s", date_text, exc)
+			continue
+
+		all_records.extend(day_records)
+		print(f"Successfully scraped {date_text}")
 
 	seen: set[tuple[Any, ...]] = set()
 	deduped: list[dict[str, Any]] = []
@@ -311,7 +384,8 @@ def download_calendar(
 		end_stamp = _format_date_key(_parse_date(end_date_text))
 		stamp = f"{start_stamp}_to_{end_stamp}"
 	else:
-		records = scrape_calendar(
+		date_text = _parse_date(date_text).strftime("%Y-%m-%d")
+		records = _scrape_calendar_with_retry(
 			source=source,
 			date_text=date_text,
 			timeline=timeline,
