@@ -1,0 +1,114 @@
+[
+  {
+    "event_time_utc": "2026-08-03T01:45:00+00:00",
+    "event": "CH RatingDog Manufacturing PMI",
+    "impact": "low",
+    "forecast": "51.9",
+    "actual": "50.9",
+    "previous": "51.7"
+  },
+  {
+    "event_time_utc": "2026-08-03T06:00:00+00:00",
+    "event": "GE Retail Sales m/m",
+    "impact": "low",
+    "forecast": "-0.4%",
+    "actual": "-1.1%",
+    "previous": "1.2%"
+  },
+  {
+    "event_time_utc": "2026-08-03T06:30:00+00:00",
+    "event": "SZ CPI m/m",
+    "impact": "low",
+    "forecast": "-0.1%",
+    "actual": "-0.1%",
+    "previous": "0.0%"
+  },
+  {
+    "event_time_utc": "2026-08-03T07:15:00+00:00",
+    "event": "SP Manufacturing PMI",
+    "impact": "low",
+    "forecast": "50.5",
+    "actual": "50.2",
+    "previous": "49.7"
+  },
+  {
+    "event_time_utc": "2026-08-03T07:30:00+00:00",
+    "event": "SZ Manufacturing PMI",
+    "impact": "low",
+    "forecast": "54.5",
+    "actual": "53.2",
+    "previous": "54.3"
+  },
+  {
+    "event_time_utc": "2026-08-03T07:45:00+00:00",
+    "event": "IT Manufacturing PMI",
+    "impact": "low",
+    "forecast": "52.5",
+    "actual": "51.3",
+    "previous": "52.2"
+  },
+  {
+    "event_time_utc": "2026-08-03T07:55:00+00:00",
+    "event": "GE Final Manufacturing PMI",
+    "impact": "low",
+    "forecast": "52.2",
+    "actual": "52.2",
+    "previous": "52.2"
+  },
+  {
+    "event_time_utc": "2026-08-03T08:00:00+00:00",
+    "event": "UK LME Copper Inventories",
+    "impact": "medium",
+    "forecast": "n/a",
+    "actual": "-5825",
+    "previous": "-5550"
+  },
+  {
+    "event_time_utc": "2026-08-03T08:30:00+00:00",
+    "event": "UK Final Manufacturing PMI",
+    "impact": "low",
+    "forecast": "52.8",
+    "actual": "51.9",
+    "previous": "52.8"
+  },
+  {
+    "event_time_utc": "2026-08-03T13:45:00+00:00",
+    "event": "US Final Manufacturing PMI",
+    "impact": "low",
+    "forecast": "53.8",
+    "actual": "53.9",
+    "previous": "53.8"
+  },
+  {
+    "event_time_utc": "2026-08-03T14:00:00+00:00",
+    "event": "US ISM Manufacturing PMI",
+    "impact": "medium",
+    "forecast": "54.0",
+    "actual": "55.6",
+    "previous": "53.3"
+  },
+  {
+    "event_time_utc": "2026-08-03T14:00:00+00:00",
+    "event": "US Construction Spending m/m",
+    "impact": "low",
+    "forecast": "0.2%",
+    "actual": "-0.1%",
+    "previous": "0.0%"
+  },
+  {
+    "event_time_utc": "2026-08-03T14:00:00+00:00",
+    "event": "US ISM Manufacturing Prices",
+    "impact": "low",
+    "forecast": "70.0",
+    "actual": "71.1",
+    "previous": "73.0"
+  },
+  {
+    "event_time_utc": "2026-08-02T22:00:00+00:00",
+    "event": "US Omdia Total Vehicle Sales",
+    "impact": "low",
+    "forecast": "16.3M",
+    "actual": "n/a",
+    "previous": "16.5M"
+  }
+]
