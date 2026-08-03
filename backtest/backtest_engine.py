@@ -400,7 +400,7 @@ if __name__ == "__main__":
             return np.random.choice([0, 1])
 
     # Mock data
-    dates = pd.date_range('2023-01-01', periods=1000, freq='H')
+    dates = pd.date_range('2023-01-01', periods=1000, freq='1h')
     data = pd.DataFrame({
         'close': 2000 + np.random.randn(1000).cumsum() * 10,
         'high': 2000 + np.random.randn(1000).cumsum() * 10 + 5,

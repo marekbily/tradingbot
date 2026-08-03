@@ -51,7 +51,8 @@ def compute_metrics(equity_curve, positions, rewards):
 
 def main():
     parser = argparse.ArgumentParser(description='Quick DreamerV3 smoke-test evaluator')
-    parser.add_argument('--checkpoint', type=str, default='train/dreamer/dreamer_xauusd_final.pt')
+    parser.add_argument('--checkpoint', type=str, default=None,
+                        help='Path to checkpoint .pt file. If omitted, latest in train/dreamer_ultimate is used')
     parser.add_argument('--start', type=str, default='2025-12-01', help='Eval window start date')
     parser.add_argument('--end', type=str, default='2025-12-16', help='Eval window end date')
     parser.add_argument('--warmup-days', type=int, default=30, help='Extra lookback to compute indicators')
@@ -73,6 +74,12 @@ def main():
         device = args.device
 
     logger.info("⚡ Quick Dreamer evaluation")
+    # Resolve checkpoint
+    from utils.checkpoint_utils import ensure_checkpoint_path
+    ckpt = ensure_checkpoint_path(args.checkpoint, default_folder='train/dreamer_ultimate')
+    if ckpt is None:
+        raise SystemExit('No checkpoint found (provide --checkpoint or train a model)')
+    args.checkpoint = ckpt
     logger.info(f"   Checkpoint: {args.checkpoint}")
     logger.info(f"   Window: {args.start} -> {args.end}")
     logger.info(f"   Warmup: {args.warmup_days} days")

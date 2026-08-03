@@ -120,7 +120,7 @@ def align_to_hourly(df_daily, df_hourly_reference):
     df_daily = df_daily.set_index('time')
 
     # Resample to hourly and forward fill
-    df_hourly = df_daily.resample('H').ffill()
+    df_hourly = df_daily.resample('1H').ffill()
 
     # Align to reference timestamps
     df_aligned = df_hourly.reindex(df_hourly_reference['time'], method='ffill')

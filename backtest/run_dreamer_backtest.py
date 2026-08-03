@@ -48,10 +48,11 @@ def compute_metrics(equity_curve, positions):
 
 def main():
     parser = argparse.ArgumentParser(description='DreamerV3 forward backtest')
-    parser.add_argument('--checkpoint', type=str, default='train/dreamer/dreamer_xauusd_final.pt')
-    parser.add_argument('--train-cutoff', type=str, default='2026-01-01')
-    parser.add_argument('--start', type=str, default='2026-01-01')
-    parser.add_argument('--end', type=str, default='2026-08-01')
+    parser.add_argument('--checkpoint', type=str, default=None,
+                        help='Path to checkpoint .pt file. If omitted, latest in train/dreamer_ultimate is used')
+    parser.add_argument('--train-cutoff', type=str, default='2022-01-01')
+    parser.add_argument('--start', type=str, default='2022-01-14')
+    parser.add_argument('--end', type=str, default='2025-12-31')
     parser.add_argument('--base-tf', type=str, default='M5')
     parser.add_argument('--device', type=str, default='auto')
     args = parser.parse_args()
@@ -93,8 +94,12 @@ def main():
 
     env = TradingEnvironment(X_eval, r_eval, window=WINDOW, cost_per_trade=COST, device=device)
 
-    if not os.path.exists(args.checkpoint):
-        raise SystemExit(f'Checkpoint not found: {args.checkpoint}')
+    # Resolve checkpoint path
+    from utils.checkpoint_utils import ensure_checkpoint_path
+    ckpt = ensure_checkpoint_path(args.checkpoint, default_folder='train/dreamer_ultimate')
+    if ckpt is None:
+        raise SystemExit('No checkpoint found. Train the model first or provide --checkpoint')
+    args.checkpoint = ckpt
 
     agent = DreamerV3Agent(
         obs_dim=env.observation_space,

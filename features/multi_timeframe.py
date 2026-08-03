@@ -372,8 +372,8 @@ def create_multi_timeframe_data(df_base, base_tf='H1'):
     resample_rules = {
         'M5': '5T',   # 5 minutes
         'M15': '15T', # 15 minutes
-        'H1': '1H',   # 1 hour
-        'H4': '4H',   # 4 hours
+        'H1': '1h',   # 1 hour
+        'H4': '4h',   # 4 hours
         'D1': '1D',   # 1 day
     }
 
@@ -401,7 +401,7 @@ if __name__ == "__main__":
     print("📊 Multi-Timeframe Features Demo\n")
 
     # Create sample data
-    dates = pd.date_range('2023-01-01', periods=1000, freq='H')
+    dates = pd.date_range('2023-01-01', periods=1000, freq='1H')
 
     df_h1 = pd.DataFrame({
         'time': dates,

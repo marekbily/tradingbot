@@ -278,15 +278,17 @@ def compare_with_random(agent, env, num_episodes=10):
 def main():
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument('--checkpoint', type=str, default='train/dreamer/dreamer_xauusd_final.pt')
+    parser.add_argument('--checkpoint', type=str, default=None,
+                        help='Path to checkpoint .pt file. If omitted, latest in train/dreamer_ultimate is used')
     parser.add_argument('--num_steps', type=int, default=1000)
     args = parser.parse_args()
-
-    # Check if checkpoint exists
-    if not os.path.exists(args.checkpoint):
-        print(f"❌ Checkpoint not found: {args.checkpoint}")
-        print(f"   Train the model first: python train/train_dreamer.py")
+    # Resolve checkpoint: user-provided or find latest
+    from utils.checkpoint_utils import ensure_checkpoint_path
+    ckpt = ensure_checkpoint_path(args.checkpoint, default_folder='train/dreamer_ultimate')
+    if ckpt is None:
+        print("❌ No checkpoint found. Train the model first or provide --checkpoint path.")
         return
+    args.checkpoint = ckpt
 
     # Load data
     print("Loading data...")
