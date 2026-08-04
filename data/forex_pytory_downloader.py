@@ -23,6 +23,7 @@ import errno
 import json
 import logging
 import os
+import random
 import time
 from importlib import import_module
 from dataclasses import dataclass
@@ -45,6 +46,7 @@ DEFAULT_SOURCE_TIMEZONE = "auto"
 DEFAULT_OUTPUT_DIR = Path("economic_calendar")
 DEFAULT_BLOCK_COOLDOWN_SECONDS = 30
 DEFAULT_SCRAPE_RETRIES = 10
+DEFAULT_RETRY_JITTER_SECONDS = 5
 
 COUNTRY_BY_CURRENCY = {
 	"USD": "United States",
@@ -268,11 +270,29 @@ def _is_transient_block_error(exc: Exception) -> bool:
 			"rate limit",
 			"too many open files",
 			"oserror(24)",
+			"ssl",
+			"ssleoferror",
+			"unexpected eof while reading",
+			"connection reset",
+			"max retries exceeded",
 			"cloudflare",
 			"captcha",
 			"temporarily unavailable",
 		)
 	)
+
+
+def _retry_delay_seconds(attempt: int, jitter_seconds: int = DEFAULT_RETRY_JITTER_SECONDS) -> int:
+	if attempt <= 1:
+		base_delay = 30
+	elif attempt == 2:
+		base_delay = 60
+	elif attempt == 3:
+		base_delay = 120
+	else:
+		base_delay = 300
+
+	return base_delay + random.randint(0, jitter_seconds)
 
 
 def _scrape_calendar_with_retry(
@@ -295,34 +315,35 @@ def _scrape_calendar_with_retry(
 		except Exception as exc:
 			is_transient_block = _is_transient_block_error(exc)
 			if attempt < max_retries:
+				delay_seconds = _retry_delay_seconds(attempt)
 				if is_transient_block:
 					print(
 						f"Failsafe engaged for {date_text} after attempt {attempt}/{max_retries}; "
-						f"cooling down {block_cooldown_seconds}s because the VPS or site is temporarily blocked"
+						f"cooling down {delay_seconds}s because the VPS or site is temporarily blocked"
 					)
 					logger.warning(
 						"Temporary block, rate limit, or file-descriptor exhaustion while scraping %s on %s; sleeping %s seconds before retry %s/%s",
 						source,
 						date_text,
-						block_cooldown_seconds,
+						delay_seconds,
 						attempt + 1,
 						max_retries,
 					)
 				else:
 					print(
 						f"Scrape retry for {date_text} after attempt {attempt}/{max_retries}; "
-						f"sleeping {block_cooldown_seconds}s before retry"
+						f"sleeping {delay_seconds}s before retry"
 					)
 					logger.warning(
 						"Scrape error while fetching %s on %s; sleeping %s seconds before retry %s/%s: %s",
 						source,
 						date_text,
-						block_cooldown_seconds,
+						delay_seconds,
 						attempt + 1,
 						max_retries,
 						exc,
 					)
-				time.sleep(block_cooldown_seconds)
+				time.sleep(delay_seconds)
 				continue
 
 			print(f"Retry exhausted for {date_text}; skipping this day for now and continuing")
@@ -589,6 +610,9 @@ def build_arg_parser() -> argparse.ArgumentParser:
 
 def main() -> int:
 	logging.basicConfig(level=logging.INFO, format="%(levelname)s:%(name)s:%(message)s")
+	# forex_pytory logs full stack traces for transient network fetch failures.
+	# Keep our retry logs and hide third-party traceback noise.
+	logging.getLogger("forex_pytory.core.scraper._http").setLevel(logging.CRITICAL)
 	args = build_arg_parser().parse_args()
 
 	if (args.start_date is None) != (args.end_date is None):
