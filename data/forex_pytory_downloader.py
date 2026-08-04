@@ -18,12 +18,14 @@ Include currency, impact level, event name, and country consistently.
 from __future__ import annotations
 
 import argparse
+import calendar
 import csv
 import errno
 import json
 import logging
 import os
 import random
+import sys
 import time
 from importlib import import_module
 from dataclasses import dataclass
@@ -122,6 +124,15 @@ def _build_output_paths(
 	json_path = output_dir_path / f"{base_name}.json" if output_format in {"json", "both"} else None
 	csv_path = output_dir_path / f"{base_name}.csv" if output_format in {"csv", "both"} else None
 	return json_path, csv_path
+
+
+def _month_end(value: datetime) -> datetime:
+	last_day = calendar.monthrange(value.year, value.month)[1]
+	return value.replace(day=last_day)
+
+
+def _date_next_day_string(value: datetime) -> str:
+	return (value + timedelta(days=1)).strftime("%Y-%m-%d")
 
 
 def _parse_date(date_text: str | None) -> datetime:
@@ -439,6 +450,7 @@ def download_calendar_both_interleaved(
 	output_format: str = "json",
 	output_dir: str | os.PathLike[str] = DEFAULT_OUTPUT_DIR,
 	source_timezone: str = DEFAULT_SOURCE_TIMEZONE,
+	output_label: str | None = None,
 ) -> dict[str, DownloadResult]:
 	"""Scrape forex+metals day-by-day in an interleaved order with monthly checkpoints."""
 
@@ -447,7 +459,7 @@ def download_calendar_both_interleaved(
 	if start_date > end_date:
 		raise ValueError("start_date must be earlier than or equal to end_date")
 
-	stamp = f"{_format_date_key(start_date)}_to_{_format_date_key(end_date)}"
+	stamp = output_label or f"{_format_date_key(start_date)}_to_{_format_date_key(end_date)}"
 	sources = ["forex", "metals"]
 	records_by_source: dict[str, list[dict[str, Any]]] = {source: [] for source in sources}
 	paths_by_source: dict[str, tuple[Path | None, Path | None]] = {
@@ -542,6 +554,7 @@ def download_calendar(
 	output_format: str = "json",
 	output_dir: str | os.PathLike[str] = DEFAULT_OUTPUT_DIR,
 	source_timezone: str = DEFAULT_SOURCE_TIMEZONE,
+	output_label: str | None = None,
 ) -> DownloadResult:
 	"""Download calendar data and persist it to disk."""
 	if source not in SOURCE_SCRAPERS:
@@ -551,7 +564,7 @@ def download_calendar(
 	if using_range:
 		start_stamp = _format_date_key(_parse_date(start_date_text))
 		end_stamp = _format_date_key(_parse_date(end_date_text))
-		stamp = f"{start_stamp}_to_{end_stamp}"
+		stamp = output_label or f"{start_stamp}_to_{end_stamp}"
 		json_path, csv_path = _build_output_paths(
 			source=source,
 			timeline=timeline,
@@ -570,7 +583,7 @@ def download_calendar(
 		)
 	else:
 		date_text = _parse_date(date_text).strftime("%Y-%m-%d")
-		stamp = _format_date_key(_parse_date(date_text))
+		stamp = output_label or _format_date_key(_parse_date(date_text))
 		json_path, csv_path = _build_output_paths(
 			source=source,
 			timeline=timeline,
@@ -598,12 +611,103 @@ def download_calendar(
 	return DownloadResult(json_path=json_path, csv_path=csv_path, row_count=len(records))
 
 
+def _build_restart_argv(args: argparse.Namespace, next_start_date: str) -> list[str]:
+	argv = [
+		sys.executable,
+		str(Path(__file__).resolve()),
+		"--source",
+		args.source,
+		"--start-date",
+		next_start_date,
+		"--end-date",
+		args.end_date,
+		"--timeline",
+		args.timeline,
+		"--format",
+		args.format,
+		"--output-dir",
+		args.output_dir,
+		"--source-timezone",
+		args.source_timezone,
+		"--output-label",
+		args.output_label,
+	]
+	if args.no_restart_after_checkpoint:
+		argv.append("--no-restart-after-checkpoint")
+	return argv
+
+
+def _process_range_with_optional_restarts(args: argparse.Namespace) -> int:
+	start_date = _parse_date(args.start_date)
+	end_date = _parse_date(args.end_date)
+	output_label = args.output_label or f"{_format_date_key(start_date)}_to_{_format_date_key(end_date)}"
+	args.output_label = output_label
+
+	current_start = start_date
+	while current_start <= end_date:
+		current_end = min(_month_end(current_start), end_date)
+		current_start_text = current_start.strftime("%Y-%m-%d")
+		current_end_text = current_end.strftime("%Y-%m-%d")
+
+		if args.source == "both":
+			results = download_calendar_both_interleaved(
+				start_date_text=current_start_text,
+				end_date_text=current_end_text,
+				timeline=args.timeline,
+				output_format=args.format,
+				output_dir=args.output_dir,
+				source_timezone=args.source_timezone,
+				output_label=output_label,
+			)
+			for source, result in results.items():
+				logger.info("[%s] Downloaded %s rows", source, result.row_count)
+				if result.json_path:
+					logger.info("[%s] JSON saved to %s", source, result.json_path)
+				if result.csv_path:
+					logger.info("[%s] CSV saved to %s", source, result.csv_path)
+		else:
+			result = download_calendar(
+				source=args.source,
+				start_date_text=current_start_text,
+				end_date_text=current_end_text,
+				timeline=args.timeline,
+				output_format=args.format,
+				output_dir=args.output_dir,
+				source_timezone=args.source_timezone,
+				output_label=output_label,
+			)
+			logger.info("[%s] Downloaded %s rows", args.source, result.row_count)
+			if result.json_path:
+				logger.info("[%s] JSON saved to %s", args.source, result.json_path)
+			if result.csv_path:
+				logger.info("[%s] CSV saved to %s", args.source, result.csv_path)
+
+		if current_end >= end_date:
+			return 0
+
+		next_start = _date_next_day_string(current_end)
+		if args.no_restart_after_checkpoint:
+			current_start = _parse_date(next_start)
+			continue
+
+		logger.info("Restarting process after checkpoint month %s", current_end.strftime("%Y-%m"))
+		os.execv(sys.executable, _build_restart_argv(args, next_start))
+
+	return 0
+
+
 def build_arg_parser() -> argparse.ArgumentParser:
 	parser = argparse.ArgumentParser(description="Download economic calendar data.")
 	parser.add_argument("--source", choices=[*sorted(SOURCE_SCRAPERS), "both"], default="forex")
 	parser.add_argument("--date", help="Date in YYYY-MM-DD format. Defaults to today.")
 	parser.add_argument("--start-date", dest="start_date", help="Start date in YYYY-MM-DD format, inclusive.")
 	parser.add_argument("--end-date", dest="end_date", help="End date in YYYY-MM-DD format, inclusive.")
+	parser.add_argument("--output-label", dest="output_label", help="Internal fixed output label used across restarts.")
+	parser.add_argument(
+		"--no-restart-after-checkpoint",
+		action="store_true",
+		help="Disable process restart after each monthly checkpoint.",
+	)
 	parser.add_argument("--timeline", default="day", help="Timeline passed to the upstream calendar URL.")
 	parser.add_argument("--format", choices=["json", "csv", "both"], default="json")
 	parser.add_argument("--output-dir", default=str(DEFAULT_OUTPUT_DIR))
@@ -626,22 +730,8 @@ def main() -> int:
 		raise SystemExit("Both --start-date and --end-date are required when using range mode.")
 
 	using_range = bool(args.start_date or args.end_date)
-	if args.source == "both" and using_range:
-		results = download_calendar_both_interleaved(
-			start_date_text=args.start_date,
-			end_date_text=args.end_date,
-			timeline=args.timeline,
-			output_format=args.format,
-			output_dir=args.output_dir,
-			source_timezone=args.source_timezone,
-		)
-		for source, result in results.items():
-			logger.info("[%s] Downloaded %s rows", source, result.row_count)
-			if result.json_path:
-				logger.info("[%s] JSON saved to %s", source, result.json_path)
-			if result.csv_path:
-				logger.info("[%s] CSV saved to %s", source, result.csv_path)
-		return 0
+	if using_range:
+		return _process_range_with_optional_restarts(args)
 
 	sources_to_run = ["forex", "metals"] if args.source == "both" else [args.source]
 	for source in sources_to_run:
