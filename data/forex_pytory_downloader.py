@@ -47,6 +47,7 @@ DEFAULT_OUTPUT_DIR = Path("economic_calendar")
 DEFAULT_BLOCK_COOLDOWN_SECONDS = 30
 DEFAULT_SCRAPE_RETRIES = 10
 DEFAULT_RETRY_JITTER_SECONDS = 5
+DEFAULT_NORMAL_SCRAPE_DELAY_SECONDS = 1
 
 COUNTRY_BY_CURRENCY = {
 	"USD": "United States",
@@ -295,6 +296,10 @@ def _retry_delay_seconds(attempt: int, jitter_seconds: int = DEFAULT_RETRY_JITTE
 	return base_delay + random.randint(0, jitter_seconds)
 
 
+def _normal_scrape_pause(delay_seconds: int = DEFAULT_NORMAL_SCRAPE_DELAY_SECONDS) -> None:
+	time.sleep(delay_seconds)
+
+
 def _scrape_calendar_with_retry(
 	source: str,
 	date_text: str,
@@ -410,6 +415,7 @@ def scrape_calendar_range(
 
 		all_records.extend(day_records)
 		print(f"Successfully scraped {date_text}")
+		_normal_scrape_pause()
 
 		if checkpoint_json_path:
 			next_day = day_value + timedelta(days=1)
@@ -466,6 +472,7 @@ def download_calendar_both_interleaved(
 			)
 			records_by_source[source].extend(day_records)
 			print(f"Successfully scraped {source} {date_text}")
+			_normal_scrape_pause()
 
 		next_day = day_value + timedelta(days=1)
 		is_month_boundary = next_day.month != day_value.month
