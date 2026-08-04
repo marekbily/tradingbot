@@ -1,0 +1,2378 @@
+[
+  {
+    "event_time_utc": "2007-01-01T00:00:00+00:00",
+    "event": "CH Manufacturing PMI",
+    "impact": "medium",
+    "forecast": "n/a",
+    "actual": "54.8",
+    "previous": "55.3"
+  },
+  {
+    "event_time_utc": "2007-01-01T21:30:00+00:00",
+    "event": "AU AIG Manufacturing Index",
+    "impact": "low",
+    "forecast": "n/a",
+    "actual": "52.4",
+    "previous": "54.4"
+  },
+  {
+    "event_time_utc": "2007-01-02T01:30:00+00:00",
+    "event": "CH RatingDog Manufacturing PMI",
+    "impact": "low",
+    "forecast": "n/a",
+    "actual": "52.4",
+    "previous": "53.0"
+  },
+  {
+    "event_time_utc": "2007-01-02T04:30:00+00:00",
+    "event": "AU Commodity Prices y/y",
+    "impact": "low",
+    "forecast": "n/a",
+    "actual": "11.0%",
+    "previous": "13.9%"
+  },
+  {
+    "event_time_utc": "2007-01-02T07:15:00+00:00",
+    "event": "SP Manufacturing PMI",
+    "impact": "low",
+    "forecast": "n/a",
+    "actual": "57.2",
+    "previous": "56.1"
+  },
+  {
+    "event_time_utc": "2007-01-02T07:45:00+00:00",
+    "event": "IT Manufacturing PMI",
+    "impact": "low",
+    "forecast": "55.5",
+    "actual": "55.0",
+    "previous": "54.8"
+  },
+  {
+    "event_time_utc": "2007-01-02T08:30:00+00:00",
+    "event": "UK Final Manufacturing PMI",
+    "impact": "low",
+    "forecast": "53.0",
+    "actual": "51.9",
+    "previous": "52.5"
+  },
+  {
+    "event_time_utc": "2007-01-03T07:30:00+00:00",
+    "event": "SZ Manufacturing PMI",
+    "impact": "low",
+    "forecast": "66.0",
+    "actual": "65.0",
+    "previous": "67.0"
+  },
+  {
+    "event_time_utc": "2007-01-03T08:30:00+00:00",
+    "event": "UK Construction PMI",
+    "impact": "low",
+    "forecast": "54.5",
+    "actual": "57.5",
+    "previous": "54.8"
+  },
+  {
+    "event_time_utc": "2007-01-03T12:15:00+00:00",
+    "event": "US ADP Non-Farm Employment Change",
+    "impact": "high",
+    "forecast": "120K",
+    "actual": "-40K",
+    "previous": "230K"
+  },
+  {
+    "event_time_utc": "2007-01-03T14:00:00+00:00",
+    "event": "US ISM Manufacturing PMI",
+    "impact": "medium",
+    "forecast": "51.0",
+    "actual": "51.4",
+    "previous": "49.5"
+  },
+  {
+    "event_time_utc": "2007-01-03T14:00:00+00:00",
+    "event": "US Construction Spending m/m",
+    "impact": "low",
+    "forecast": "-0.6%",
+    "actual": "-0.2%",
+    "previous": "-1.0%"
+  },
+  {
+    "event_time_utc": "2007-01-03T14:00:00+00:00",
+    "event": "US ISM Manufacturing Prices",
+    "impact": "low",
+    "forecast": "54.0",
+    "actual": "47.5",
+    "previous": "53.5"
+  },
+  {
+    "event_time_utc": "2007-01-02T22:00:00+00:00",
+    "event": "US Total Vehicle Sales",
+    "impact": "low",
+    "forecast": "16.5M",
+    "actual": "16.7M",
+    "previous": "16.1M"
+  },
+  {
+    "event_time_utc": "2007-01-03T18:00:00+00:00",
+    "event": "US FOMC Meeting Minutes",
+    "impact": "high",
+    "forecast": "n/a",
+    "actual": "n/a",
+    "previous": "n/a"
+  },
+  {
+    "event_time_utc": "2007-01-04T05:45:00+00:00",
+    "event": "SZ CPI m/m",
+    "impact": "low",
+    "forecast": "0.1%",
+    "actual": "0.0%",
+    "previous": "0.0%"
+  },
+  {
+    "event_time_utc": "2007-01-04T08:30:00+00:00",
+    "event": "UK Final Services PMI",
+    "impact": "low",
+    "forecast": "60.0",
+    "actual": "60.6",
+    "previous": "59.8"
+  },
+  {
+    "event_time_utc": "2007-01-04T09:00:00+00:00",
+    "event": "EZ CPI Flash Estimate y/y",
+    "impact": "low",
+    "forecast": "1.9%",
+    "actual": "1.9%",
+    "previous": "1.9%"
+  },
+  {
+    "event_time_utc": "2007-01-04T09:00:00+00:00",
+    "event": "IT Prelim CPI m/m",
+    "impact": "low",
+    "forecast": "0.1%",
+    "actual": "0.1%",
+    "previous": "0.2%"
+  },
+  {
+    "event_time_utc": "2007-01-04T12:30:00+00:00",
+    "event": "CA RMPI m/m",
+    "impact": "low",
+    "forecast": "1.0%",
+    "actual": "0.9%",
+    "previous": "-2.8%"
+  },
+  {
+    "event_time_utc": "2007-01-04T12:30:00+00:00",
+    "event": "US Unemployment Claims",
+    "impact": "low",
+    "forecast": "318K",
+    "actual": "329K",
+    "previous": "317K"
+  },
+  {
+    "event_time_utc": "2007-01-04T14:00:00+00:00",
+    "event": "US ISM Services PMI",
+    "impact": "high",
+    "forecast": "58.0",
+    "actual": "57.1",
+    "previous": "58.9"
+  },
+  {
+    "event_time_utc": "2007-01-04T14:00:00+00:00",
+    "event": "US Factory Orders m/m",
+    "impact": "medium",
+    "forecast": "1.5%",
+    "actual": "0.9%",
+    "previous": "-4.5%"
+  },
+  {
+    "event_time_utc": "2007-01-04T14:00:00+00:00",
+    "event": "US Pending Home Sales m/m",
+    "impact": "low",
+    "forecast": "0.0%",
+    "actual": "-0.5%",
+    "previous": "-1.5%"
+  },
+  {
+    "event_time_utc": "2007-01-04T22:50:00+00:00",
+    "event": "JN Monetary Base y/y",
+    "impact": "low",
+    "forecast": "-23.5%",
+    "actual": "-20.0%",
+    "previous": "-22.3%"
+  },
+  {
+    "event_time_utc": "2007-01-05T07:00:00+00:00",
+    "event": "SZ Foreign Currency Reserves",
+    "impact": "low",
+    "forecast": "n/a",
+    "actual": "46B",
+    "previous": "46B"
+  },
+  {
+    "event_time_utc": "2007-01-05T09:00:00+00:00",
+    "event": "EZ Consumer Confidence",
+    "impact": "medium",
+    "forecast": "-7",
+    "actual": "-6",
+    "previous": "-7"
+  },
+  {
+    "event_time_utc": "2007-01-05T11:00:00+00:00",
+    "event": "CA Employment Change",
+    "impact": "high",
+    "forecast": "17.0K",
+    "actual": "62.0K",
+    "previous": "22.0K"
+  },
+  {
+    "event_time_utc": "2007-01-05T11:00:00+00:00",
+    "event": "CA Unemployment Rate",
+    "impact": "high",
+    "forecast": "6.3%",
+    "actual": "6.1%",
+    "previous": "6.3%"
+  },
+  {
+    "event_time_utc": "2007-01-05T12:30:00+00:00",
+    "event": "US Average Hourly Earnings m/m",
+    "impact": "high",
+    "forecast": "0.3%",
+    "actual": "0.5%",
+    "previous": "0.3%"
+  },
+  {
+    "event_time_utc": "2007-01-05T12:30:00+00:00",
+    "event": "US Non-Farm Employment Change",
+    "impact": "high",
+    "forecast": "115K",
+    "actual": "167K",
+    "previous": "132K"
+  },
+  {
+    "event_time_utc": "2007-01-05T12:30:00+00:00",
+    "event": "US Unemployment Rate",
+    "impact": "high",
+    "forecast": "4.5%",
+    "actual": "4.5%",
+    "previous": "4.5%"
+  },
+  {
+    "event_time_utc": "2007-01-05T14:00:00+00:00",
+    "event": "CA Ivey PMI",
+    "impact": "medium",
+    "forecast": "50.5",
+    "actual": "49.4",
+    "previous": "52.8"
+  },
+  {
+    "event_time_utc": "2007-01-08T06:00:00+00:00",
+    "event": "GE Retail Sales m/m",
+    "impact": "low",
+    "forecast": "0.6%",
+    "actual": "-0.3%",
+    "previous": "-0.5%"
+  },
+  {
+    "event_time_utc": "2007-01-08T10:00:00+00:00",
+    "event": "GE Factory Orders m/m",
+    "impact": "low",
+    "forecast": "1.5%",
+    "actual": "1.5%",
+    "previous": "-0.7%"
+  },
+  {
+    "event_time_utc": "2007-01-08T14:30:00+00:00",
+    "event": "CA BOC Business Outlook Survey",
+    "impact": "low",
+    "forecast": "n/a",
+    "actual": "n/a",
+    "previous": "n/a"
+  },
+  {
+    "event_time_utc": "2007-01-09T06:00:00+00:00",
+    "event": "GE Trade Balance",
+    "impact": "medium",
+    "forecast": "15.3B",
+    "actual": "19.3B",
+    "previous": "17.2B"
+  },
+  {
+    "event_time_utc": "2007-01-09T10:00:00+00:00",
+    "event": "GE Industrial Production m/m",
+    "impact": "low",
+    "forecast": "1.0%",
+    "actual": "1.8%",
+    "previous": "-0.8%"
+  },
+  {
+    "event_time_utc": "2007-01-09T23:30:00+00:00",
+    "event": "AU Goods Trade Balance",
+    "impact": "low",
+    "forecast": "-0.73B",
+    "actual": "-0.84B",
+    "previous": "-1.51"
+  },
+  {
+    "event_time_utc": "2007-01-10T06:45:00+00:00",
+    "event": "FR Industrial Production m/m",
+    "impact": "low",
+    "forecast": "0.7%",
+    "actual": "-0.2%",
+    "previous": "0.0%"
+  },
+  {
+    "event_time_utc": "2007-01-10T06:45:00+00:00",
+    "event": "FR Trade Balance",
+    "impact": "low",
+    "forecast": "-2.3B",
+    "actual": "-2.8B",
+    "previous": "-2.8B"
+  },
+  {
+    "event_time_utc": "2007-01-10T08:30:00+00:00",
+    "event": "UK Goods Trade Balance",
+    "impact": "low",
+    "forecast": "-6.45B",
+    "actual": "-7.2B",
+    "previous": "-6.33B"
+  },
+  {
+    "event_time_utc": "2007-01-10T12:30:00+00:00",
+    "event": "CA Trade Balance",
+    "impact": "medium",
+    "forecast": "3.7B",
+    "actual": "4.7B",
+    "previous": "3.8B"
+  },
+  {
+    "event_time_utc": "2007-01-10T12:30:00+00:00",
+    "event": "US Trade Balance",
+    "impact": "medium",
+    "forecast": "-60.0B",
+    "actual": "-58.2B",
+    "previous": "-58.9B"
+  },
+  {
+    "event_time_utc": "2007-01-10T14:00:00+00:00",
+    "event": "US Final Wholesale Inventories m/m",
+    "impact": "medium",
+    "forecast": "0.4%",
+    "actual": "1.3%",
+    "previous": "0.4%"
+  },
+  {
+    "event_time_utc": "2007-01-10T14:00:00+00:00",
+    "event": "US JOLTS Job Openings",
+    "impact": "low",
+    "forecast": "n/a",
+    "actual": "4.24M",
+    "previous": "4.25M"
+  },
+  {
+    "event_time_utc": "2007-01-10T23:30:00+00:00",
+    "event": "AU Employment Change",
+    "impact": "low",
+    "forecast": "12.0K",
+    "actual": "44.6K",
+    "previous": "43.0K"
+  },
+  {
+    "event_time_utc": "2007-01-10T23:30:00+00:00",
+    "event": "AU Unemployment Rate",
+    "impact": "low",
+    "forecast": "4.8%",
+    "actual": "4.6%",
+    "previous": "4.6%"
+  },
+  {
+    "event_time_utc": "2007-01-11T00:35:00+00:00",
+    "event": "CH USD-Denominated Trade Balance",
+    "impact": "low",
+    "forecast": "21.6B",
+    "actual": "21.0B",
+    "previous": "22.9B"
+  },
+  {
+    "event_time_utc": "2007-01-11T08:30:00+00:00",
+    "event": "UK Manufacturing Production m/m",
+    "impact": "medium",
+    "forecast": "0.2%",
+    "actual": "0.3%",
+    "previous": "-0.3%"
+  },
+  {
+    "event_time_utc": "2007-01-11T08:30:00+00:00",
+    "event": "UK Industrial Production m/m",
+    "impact": "low",
+    "forecast": "0.2%",
+    "actual": "0.5%",
+    "previous": "-0.6%"
+  },
+  {
+    "event_time_utc": "2007-01-11T11:00:00+00:00",
+    "event": "UK Official Bank Rate",
+    "impact": "high",
+    "forecast": "5.00%",
+    "actual": "5.25%",
+    "previous": "5.00%"
+  },
+  {
+    "event_time_utc": "2007-01-11T11:45:00+00:00",
+    "event": "EZ Main Refinancing Rate",
+    "impact": "high",
+    "forecast": "3.50%",
+    "actual": "3.50%",
+    "previous": "3.50%"
+  },
+  {
+    "event_time_utc": "2007-01-11T12:30:00+00:00",
+    "event": "EZ ECB Press Conference",
+    "impact": "high",
+    "forecast": "n/a",
+    "actual": "n/a",
+    "previous": "n/a"
+  },
+  {
+    "event_time_utc": "2007-01-11T12:30:00+00:00",
+    "event": "US Unemployment Claims",
+    "impact": "low",
+    "forecast": "320K",
+    "actual": "299K",
+    "previous": "329K"
+  },
+  {
+    "event_time_utc": "2007-01-11T22:50:00+00:00",
+    "event": "JN M2 Money Stock y/y",
+    "impact": "low",
+    "forecast": "0.8%",
+    "actual": "0.8%",
+    "previous": "0.7%"
+  },
+  {
+    "event_time_utc": "2007-01-12T12:30:00+00:00",
+    "event": "US Core Retail Sales m/m",
+    "impact": "high",
+    "forecast": "0.5%",
+    "actual": "1.0%",
+    "previous": "1.1%"
+  },
+  {
+    "event_time_utc": "2007-01-12T12:30:00+00:00",
+    "event": "US Retail Sales m/m",
+    "impact": "high",
+    "forecast": "0.6%",
+    "actual": "0.9%",
+    "previous": "1.0%"
+  },
+  {
+    "event_time_utc": "2007-01-12T12:30:00+00:00",
+    "event": "US Import Prices m/m",
+    "impact": "medium",
+    "forecast": "0.5%",
+    "actual": "1.1%",
+    "previous": "0.2%"
+  },
+  {
+    "event_time_utc": "2007-01-12T14:00:00+00:00",
+    "event": "US Business Inventories m/m",
+    "impact": "low",
+    "forecast": "0.4%",
+    "actual": "0.4%",
+    "previous": "0.2%"
+  },
+  {
+    "event_time_utc": "2007-01-14T22:50:00+00:00",
+    "event": "JN Core Machinery Orders m/m",
+    "impact": "low",
+    "forecast": "4.2%",
+    "actual": "3.8%",
+    "previous": "2.8%"
+  },
+  {
+    "event_time_utc": "2007-01-15T01:00:00+00:00",
+    "event": "CH M2 Money Supply y/y",
+    "impact": "medium",
+    "forecast": "16.7%",
+    "actual": "16.9%",
+    "previous": "16.8%"
+  },
+  {
+    "event_time_utc": "2007-01-15T01:00:00+00:00",
+    "event": "CH New Loans",
+    "impact": "low",
+    "forecast": "n/a",
+    "actual": "214B",
+    "previous": "194B"
+  },
+  {
+    "event_time_utc": "2007-01-15T08:00:00+00:00",
+    "event": "IT Industrial Production m/m",
+    "impact": "low",
+    "forecast": "0.3%",
+    "actual": "-0.3%",
+    "previous": "0.6%"
+  },
+  {
+    "event_time_utc": "2007-01-15T09:00:00+00:00",
+    "event": "EZ Industrial Production m/m",
+    "impact": "low",
+    "forecast": "0.6%",
+    "actual": "0.2%",
+    "previous": "-0.2%"
+  },
+  {
+    "event_time_utc": "2007-01-16T03:30:00+00:00",
+    "event": "JN Revised Industrial Production m/m",
+    "impact": "low",
+    "forecast": "0.7%",
+    "actual": "0.8%",
+    "previous": "0.7%"
+  },
+  {
+    "event_time_utc": "2007-01-16T08:30:00+00:00",
+    "event": "UK CPI y/y",
+    "impact": "medium",
+    "forecast": "2.8%",
+    "actual": "3.0%",
+    "previous": "2.7%"
+  },
+  {
+    "event_time_utc": "2007-01-16T08:30:00+00:00",
+    "event": "UK Core CPI y/y",
+    "impact": "low",
+    "forecast": "1.7%",
+    "actual": "1.8%",
+    "previous": "1.6%"
+  },
+  {
+    "event_time_utc": "2007-01-16T09:00:00+00:00",
+    "event": "GE ZEW Economic Sentiment",
+    "impact": "low",
+    "forecast": "-12.0",
+    "actual": "-3.6",
+    "previous": "-19.0"
+  },
+  {
+    "event_time_utc": "2007-01-16T12:30:00+00:00",
+    "event": "US Empire State Manufacturing Index",
+    "impact": "low",
+    "forecast": "18.0",
+    "actual": "9.1",
+    "previous": "23.1"
+  },
+  {
+    "event_time_utc": "2007-01-16T13:00:00+00:00",
+    "event": "CA BOC Rate Statement",
+    "impact": "medium",
+    "forecast": "n/a",
+    "actual": "n/a",
+    "previous": "n/a"
+  },
+  {
+    "event_time_utc": "2007-01-16T13:00:00+00:00",
+    "event": "CA Overnight Rate",
+    "impact": "medium",
+    "forecast": "4.25%",
+    "actual": "4.25%",
+    "previous": "4.25%"
+  },
+  {
+    "event_time_utc": "2007-01-16T20:45:00+00:00",
+    "event": "NZ CPI q/q",
+    "impact": "low",
+    "forecast": "-0.1%",
+    "actual": "-0.2%",
+    "previous": "0.7%"
+  },
+  {
+    "event_time_utc": "2007-01-17T06:00:00+00:00",
+    "event": "GE Final CPI m/m",
+    "impact": "low",
+    "forecast": "0.8%",
+    "actual": "0.8%",
+    "previous": "0.8%"
+  },
+  {
+    "event_time_utc": "2007-01-17T08:30:00+00:00",
+    "event": "UK Average Earnings Index 3m/y",
+    "impact": "low",
+    "forecast": "4.2%",
+    "actual": "4.1%",
+    "previous": "4.1%"
+  },
+  {
+    "event_time_utc": "2007-01-17T08:30:00+00:00",
+    "event": "UK Claimant Count Change",
+    "impact": "low",
+    "forecast": "-5.0K",
+    "actual": "-5.5K",
+    "previous": "-7.9K"
+  },
+  {
+    "event_time_utc": "2007-01-17T08:30:00+00:00",
+    "event": "UK Unemployment Rate",
+    "impact": "low",
+    "forecast": "5.5%",
+    "actual": "5.5%",
+    "previous": "5.5%"
+  },
+  {
+    "event_time_utc": "2007-01-17T09:00:00+00:00",
+    "event": "EZ Trade Balance",
+    "impact": "low",
+    "forecast": "2.5B",
+    "actual": "4.5B",
+    "previous": "2.4B"
+  },
+  {
+    "event_time_utc": "2007-01-17T12:30:00+00:00",
+    "event": "US Core PPI m/m",
+    "impact": "medium",
+    "forecast": "0.1%",
+    "actual": "0.2%",
+    "previous": "1.3%"
+  },
+  {
+    "event_time_utc": "2007-01-17T12:30:00+00:00",
+    "event": "US PPI m/m",
+    "impact": "medium",
+    "forecast": "0.6%",
+    "actual": "0.9%",
+    "previous": "2.0%"
+  },
+  {
+    "event_time_utc": "2007-01-17T13:15:00+00:00",
+    "event": "US Capacity Utilization Rate",
+    "impact": "medium",
+    "forecast": "81.8%",
+    "actual": "81.8%",
+    "previous": "81.6%"
+  },
+  {
+    "event_time_utc": "2007-01-17T13:15:00+00:00",
+    "event": "US Industrial Production m/m",
+    "impact": "medium",
+    "forecast": "0.1%",
+    "actual": "0.4%",
+    "previous": "-0.1%"
+  },
+  {
+    "event_time_utc": "2007-01-17T18:00:00+00:00",
+    "event": "US Beige Book",
+    "impact": "low",
+    "forecast": "n/a",
+    "actual": "n/a",
+    "previous": "n/a"
+  },
+  {
+    "event_time_utc": "2007-01-18T05:30:00+00:00",
+    "event": "JN BOJ Press Conference",
+    "impact": "medium",
+    "forecast": "n/a",
+    "actual": "n/a",
+    "previous": "n/a"
+  },
+  {
+    "event_time_utc": "2007-01-18T08:00:00+00:00",
+    "event": "IT Trade Balance",
+    "impact": "low",
+    "forecast": "-1.12B",
+    "actual": "-0.92B",
+    "previous": "-0.86B"
+  },
+  {
+    "event_time_utc": "2007-01-18T12:30:00+00:00",
+    "event": "US Core CPI m/m",
+    "impact": "high",
+    "forecast": "0.2%",
+    "actual": "0.2%",
+    "previous": "0.0%"
+  },
+  {
+    "event_time_utc": "2007-01-18T12:30:00+00:00",
+    "event": "US Core CPI y/y",
+    "impact": "high",
+    "forecast": "2.6%",
+    "actual": "2.6%",
+    "previous": "2.6%"
+  },
+  {
+    "event_time_utc": "2007-01-18T12:30:00+00:00",
+    "event": "US CPI m/m",
+    "impact": "high",
+    "forecast": "0.5%",
+    "actual": "0.5%",
+    "previous": "0.0%"
+  },
+  {
+    "event_time_utc": "2007-01-18T12:30:00+00:00",
+    "event": "US CPI y/y",
+    "impact": "high",
+    "forecast": "2.3%",
+    "actual": "2.5%",
+    "previous": "2.0%"
+  },
+  {
+    "event_time_utc": "2007-01-18T12:30:00+00:00",
+    "event": "US Building Permits",
+    "impact": "low",
+    "forecast": "1.53M",
+    "actual": "1.60M",
+    "previous": "1.51M"
+  },
+  {
+    "event_time_utc": "2007-01-18T12:30:00+00:00",
+    "event": "US Housing Starts",
+    "impact": "low",
+    "forecast": "1.57M",
+    "actual": "1.64M",
+    "previous": "1.57M"
+  },
+  {
+    "event_time_utc": "2007-01-18T12:30:00+00:00",
+    "event": "US Unemployment Claims",
+    "impact": "low",
+    "forecast": "315K",
+    "actual": "290K",
+    "previous": "298K"
+  },
+  {
+    "event_time_utc": "2007-01-18T14:30:00+00:00",
+    "event": "CA BOC Monetary Policy Report",
+    "impact": "medium",
+    "forecast": "n/a",
+    "actual": "n/a",
+    "previous": "n/a"
+  },
+  {
+    "event_time_utc": "2007-01-18T15:15:00+00:00",
+    "event": "CA BOC Press Conference",
+    "impact": "medium",
+    "forecast": "n/a",
+    "actual": "n/a",
+    "previous": "n/a"
+  },
+  {
+    "event_time_utc": "2007-01-18T16:00:00+00:00",
+    "event": "US Philly Fed Manufacturing Index",
+    "impact": "medium",
+    "forecast": "3.0",
+    "actual": "8.3",
+    "previous": "-4.3"
+  },
+  {
+    "event_time_utc": "2007-01-19T08:30:00+00:00",
+    "event": "UK Retail Sales m/m",
+    "impact": "medium",
+    "forecast": "0.5%",
+    "actual": "1.1%",
+    "previous": "0.2%"
+  },
+  {
+    "event_time_utc": "2007-01-19T08:30:00+00:00",
+    "event": "UK M4 Money Supply m/m",
+    "impact": "low",
+    "forecast": "0.6%",
+    "actual": "0.9%",
+    "previous": "0.5%"
+  },
+  {
+    "event_time_utc": "2007-01-19T08:30:00+00:00",
+    "event": "UK Public Sector Net Borrowing",
+    "impact": "low",
+    "forecast": "7.4B",
+    "actual": "7.2B",
+    "previous": "11.2B"
+  },
+  {
+    "event_time_utc": "2007-01-19T12:30:00+00:00",
+    "event": "CA Wholesale Sales m/m",
+    "impact": "low",
+    "forecast": "0.5%",
+    "actual": "0.1%",
+    "previous": "-0.4%"
+  },
+  {
+    "event_time_utc": "2007-01-19T14:00:00+00:00",
+    "event": "US Prelim UoM Consumer Sentiment",
+    "impact": "medium",
+    "forecast": "92.5",
+    "actual": "98.0",
+    "previous": "91.7"
+  },
+  {
+    "event_time_utc": "2007-01-19T14:00:00+00:00",
+    "event": "US Prelim UoM Inflation Expectations",
+    "impact": "low",
+    "forecast": "n/a",
+    "actual": "3.0%",
+    "previous": "2.9%"
+  },
+  {
+    "event_time_utc": "2007-01-23T11:00:00+00:00",
+    "event": "CA CPI m/m",
+    "impact": "medium",
+    "forecast": "0.2%",
+    "actual": "0.2%",
+    "previous": "0.2%"
+  },
+  {
+    "event_time_utc": "2007-01-23T12:30:00+00:00",
+    "event": "CA Core Retail Sales m/m",
+    "impact": "medium",
+    "forecast": "0.5%",
+    "actual": "0.1%",
+    "previous": "-0.8%"
+  },
+  {
+    "event_time_utc": "2007-01-23T12:30:00+00:00",
+    "event": "CA Retail Sales m/m",
+    "impact": "medium",
+    "forecast": "0.9%",
+    "actual": "0.2%",
+    "previous": "-0.8%"
+  },
+  {
+    "event_time_utc": "2007-01-23T14:00:00+00:00",
+    "event": "US CB Leading Index m/m",
+    "impact": "low",
+    "forecast": "0.2%",
+    "actual": "0.3%",
+    "previous": "0.0%"
+  },
+  {
+    "event_time_utc": "2007-01-23T14:00:00+00:00",
+    "event": "US Richmond Manufacturing Index",
+    "impact": "low",
+    "forecast": "-8",
+    "actual": "-11",
+    "previous": "-6"
+  },
+  {
+    "event_time_utc": "2007-01-23T23:30:00+00:00",
+    "event": "AU CPI m/m",
+    "impact": "low",
+    "forecast": "0.2%",
+    "actual": "-0.1%",
+    "previous": "0.9%"
+  },
+  {
+    "event_time_utc": "2007-01-23T23:30:00+00:00",
+    "event": "AU Trimmed Mean CPI m/m",
+    "impact": "low",
+    "forecast": "0.7%",
+    "actual": "0.5%",
+    "previous": "0.7%"
+  },
+  {
+    "event_time_utc": "2007-01-23T22:00:00+00:00",
+    "event": "WEF Annual Meetings",
+    "impact": "medium",
+    "forecast": "n/a",
+    "actual": "n/a",
+    "previous": "n/a"
+  },
+  {
+    "event_time_utc": "2007-01-24T08:30:00+00:00",
+    "event": "UK MPC Official Bank Rate Votes",
+    "impact": "high",
+    "forecast": "8-0-1",
+    "actual": "5-0-4",
+    "previous": "0-0-9"
+  },
+  {
+    "event_time_utc": "2007-01-24T08:30:00+00:00",
+    "event": "UK Prelim GDP q/q",
+    "impact": "medium",
+    "forecast": "0.7%",
+    "actual": "0.8%",
+    "previous": "0.7%"
+  },
+  {
+    "event_time_utc": "2007-01-24T19:00:00+00:00",
+    "event": "NZ Official Cash Rate",
+    "impact": "low",
+    "forecast": "7.25%",
+    "actual": "7.25%",
+    "previous": "7.25%"
+  },
+  {
+    "event_time_utc": "2007-01-24T19:00:00+00:00",
+    "event": "NZ RBNZ Rate Statement",
+    "impact": "low",
+    "forecast": "n/a",
+    "actual": "n/a",
+    "previous": "n/a"
+  },
+  {
+    "event_time_utc": "2007-01-24T22:50:00+00:00",
+    "event": "JN Trade Balance",
+    "impact": "low",
+    "forecast": "0.87T",
+    "actual": "0.66T",
+    "previous": "0.98T"
+  },
+  {
+    "event_time_utc": "2007-01-25T01:00:00+00:00",
+    "event": "CH GDP q/y",
+    "impact": "medium",
+    "forecast": "10.2%",
+    "actual": "10.4%",
+    "previous": "10.6%"
+  },
+  {
+    "event_time_utc": "2007-01-25T01:00:00+00:00",
+    "event": "CH Industrial Production y/y",
+    "impact": "medium",
+    "forecast": "15.0%",
+    "actual": "14.7%",
+    "previous": "14.9%"
+  },
+  {
+    "event_time_utc": "2007-01-25T01:00:00+00:00",
+    "event": "CH CPI y/y",
+    "impact": "low",
+    "forecast": "1.9%",
+    "actual": "2.8%",
+    "previous": "1.9%"
+  },
+  {
+    "event_time_utc": "2007-01-25T01:00:00+00:00",
+    "event": "CH Fixed Asset Investment ytd/y",
+    "impact": "low",
+    "forecast": "26.3%",
+    "actual": "24.5%",
+    "previous": "26.6%"
+  },
+  {
+    "event_time_utc": "2007-01-25T01:00:00+00:00",
+    "event": "CH NBS Press Conference",
+    "impact": "low",
+    "forecast": "n/a",
+    "actual": "n/a",
+    "previous": "n/a"
+  },
+  {
+    "event_time_utc": "2007-01-25T01:00:00+00:00",
+    "event": "CH PPI y/y",
+    "impact": "low",
+    "forecast": "2.9%",
+    "actual": "3.1%",
+    "previous": "2.8%"
+  },
+  {
+    "event_time_utc": "2007-01-25T01:00:00+00:00",
+    "event": "CH Retail Sales y/y",
+    "impact": "low",
+    "forecast": "14.3%",
+    "actual": "14.6%",
+    "previous": "14.1%"
+  },
+  {
+    "event_time_utc": "2007-01-25T08:00:00+00:00",
+    "event": "GE ifo Business Climate",
+    "impact": "low",
+    "forecast": "108.9",
+    "actual": "107.9",
+    "previous": "108.7"
+  },
+  {
+    "event_time_utc": "2007-01-24T22:00:00+00:00",
+    "event": "WEF Annual Meetings",
+    "impact": "medium",
+    "forecast": "n/a",
+    "actual": "n/a",
+    "previous": "n/a"
+  },
+  {
+    "event_time_utc": "2007-01-25T12:30:00+00:00",
+    "event": "US Unemployment Claims",
+    "impact": "low",
+    "forecast": "310K",
+    "actual": "325K",
+    "previous": "289K"
+  },
+  {
+    "event_time_utc": "2007-01-25T14:00:00+00:00",
+    "event": "US Existing Home Sales",
+    "impact": "medium",
+    "forecast": "6.25M",
+    "actual": "6.22M",
+    "previous": "6.27M"
+  },
+  {
+    "event_time_utc": "2007-01-25T22:30:00+00:00",
+    "event": "JN Tokyo Core CPI y/y",
+    "impact": "low",
+    "forecast": "0.2%",
+    "actual": "0.2%",
+    "previous": "0.2%"
+  },
+  {
+    "event_time_utc": "2007-01-26T06:00:00+00:00",
+    "event": "GE Import Prices m/m",
+    "impact": "low",
+    "forecast": "0.1%",
+    "actual": "-0.3%",
+    "previous": "-0.4%"
+  },
+  {
+    "event_time_utc": "2007-01-26T07:00:00+00:00",
+    "event": "SP Unemployment Rate",
+    "impact": "medium",
+    "forecast": "8.2%",
+    "actual": "8.3%",
+    "previous": "8.2%"
+  },
+  {
+    "event_time_utc": "2007-01-26T08:00:00+00:00",
+    "event": "EZ M3 Money Supply y/y",
+    "impact": "low",
+    "forecast": "9.2%",
+    "actual": "9.7%",
+    "previous": "9.3%"
+  },
+  {
+    "event_time_utc": "2007-01-25T22:00:00+00:00",
+    "event": "WEF Annual Meetings",
+    "impact": "medium",
+    "forecast": "n/a",
+    "actual": "n/a",
+    "previous": "n/a"
+  },
+  {
+    "event_time_utc": "2007-01-26T12:30:00+00:00",
+    "event": "US Core Durable Goods Orders m/m",
+    "impact": "medium",
+    "forecast": "0.5%",
+    "actual": "2.3%",
+    "previous": "-1.0%"
+  },
+  {
+    "event_time_utc": "2007-01-26T12:30:00+00:00",
+    "event": "US Durable Goods Orders m/m",
+    "impact": "medium",
+    "forecast": "3.2%",
+    "actual": "3.1%",
+    "previous": "2.2%"
+  },
+  {
+    "event_time_utc": "2007-01-26T14:00:00+00:00",
+    "event": "US New Home Sales",
+    "impact": "medium",
+    "forecast": "1050K",
+    "actual": "1120K",
+    "previous": "1069K"
+  },
+  {
+    "event_time_utc": "2007-01-26T22:00:00+00:00",
+    "event": "WEF Annual Meetings",
+    "impact": "medium",
+    "forecast": "n/a",
+    "actual": "n/a",
+    "previous": "n/a"
+  },
+  {
+    "event_time_utc": "2007-01-27T22:00:00+00:00",
+    "event": "WEF Annual Meetings",
+    "impact": "medium",
+    "forecast": "n/a",
+    "actual": "n/a",
+    "previous": "n/a"
+  },
+  {
+    "event_time_utc": "2007-01-28T22:00:00+00:00",
+    "event": "EZ Eurogroup Meetings",
+    "impact": "low",
+    "forecast": "n/a",
+    "actual": "n/a",
+    "previous": "n/a"
+  },
+  {
+    "event_time_utc": "2007-01-29T22:50:00+00:00",
+    "event": "JN Prelim Industrial Production m/m",
+    "impact": "low",
+    "forecast": "0.4%",
+    "actual": "0.7%",
+    "previous": "0.8%"
+  },
+  {
+    "event_time_utc": "2007-01-29T22:00:00+00:00",
+    "event": "GE Prelim CPI m/m",
+    "impact": "low",
+    "forecast": "0.2%",
+    "actual": "-0.2%",
+    "previous": "0.8%"
+  },
+  {
+    "event_time_utc": "2007-01-29T22:00:00+00:00",
+    "event": "EZ ECOFIN Meetings",
+    "impact": "low",
+    "forecast": "n/a",
+    "actual": "n/a",
+    "previous": "n/a"
+  },
+  {
+    "event_time_utc": "2007-01-30T12:30:00+00:00",
+    "event": "CA RMPI m/m",
+    "impact": "low",
+    "forecast": "0.4%",
+    "actual": "5.2%",
+    "previous": "0.9%"
+  },
+  {
+    "event_time_utc": "2007-01-30T13:00:00+00:00",
+    "event": "US S&P/CS Composite-20 HPI y/y",
+    "impact": "low",
+    "forecast": "1.6%",
+    "actual": "1.7%",
+    "previous": "2.9%"
+  },
+  {
+    "event_time_utc": "2007-01-30T14:00:00+00:00",
+    "event": "US CB Consumer Confidence",
+    "impact": "high",
+    "forecast": "110.5",
+    "actual": "110.3",
+    "previous": "110.0"
+  },
+  {
+    "event_time_utc": "2007-01-31T06:00:00+00:00",
+    "event": "GE Retail Sales m/m",
+    "impact": "low",
+    "forecast": "1.2%",
+    "actual": "2.4%",
+    "previous": "-0.7%"
+  },
+  {
+    "event_time_utc": "2007-01-31T09:00:00+00:00",
+    "event": "EZ Consumer Confidence",
+    "impact": "medium",
+    "forecast": "-6",
+    "actual": "-7",
+    "previous": "-6"
+  },
+  {
+    "event_time_utc": "2007-01-31T09:00:00+00:00",
+    "event": "EZ CPI Flash Estimate y/y",
+    "impact": "low",
+    "forecast": "2.1%",
+    "actual": "1.9%",
+    "previous": "1.9%"
+  },
+  {
+    "event_time_utc": "2007-01-31T09:30:00+00:00",
+    "event": "SZ KOF Economic Barometer",
+    "impact": "medium",
+    "forecast": "1.55",
+    "actual": "1.71",
+    "previous": "1.75"
+  },
+  {
+    "event_time_utc": "2007-01-31T12:15:00+00:00",
+    "event": "US ADP Non-Farm Employment Change",
+    "impact": "high",
+    "forecast": "135K",
+    "actual": "152K",
+    "previous": "147K"
+  },
+  {
+    "event_time_utc": "2007-01-31T12:30:00+00:00",
+    "event": "CA GDP m/m",
+    "impact": "high",
+    "forecast": "0.3%",
+    "actual": "0.2%",
+    "previous": "0.0%"
+  },
+  {
+    "event_time_utc": "2007-01-31T12:30:00+00:00",
+    "event": "US Advance GDP q/q",
+    "impact": "high",
+    "forecast": "3.0%",
+    "actual": "3.5%",
+    "previous": "2.0%"
+  },
+  {
+    "event_time_utc": "2007-01-31T12:30:00+00:00",
+    "event": "US Advance GDP Price Index q/q",
+    "impact": "low",
+    "forecast": "1.7%",
+    "actual": "1.5%",
+    "previous": "1.9%"
+  },
+  {
+    "event_time_utc": "2007-01-31T12:30:00+00:00",
+    "event": "US Employment Cost Index q/q",
+    "impact": "low",
+    "forecast": "1.0%",
+    "actual": "0.8%",
+    "previous": "1.0%"
+  },
+  {
+    "event_time_utc": "2007-01-31T13:45:00+00:00",
+    "event": "US Chicago PMI",
+    "impact": "low",
+    "forecast": "52.0",
+    "actual": "48.8",
+    "previous": "52.4"
+  },
+  {
+    "event_time_utc": "2007-01-31T14:00:00+00:00",
+    "event": "US Construction Spending m/m",
+    "impact": "low",
+    "forecast": "-0.1%",
+    "actual": "-0.4%",
+    "previous": "0.1%"
+  },
+  {
+    "event_time_utc": "2007-01-31T18:15:00+00:00",
+    "event": "US Federal Funds Rate",
+    "impact": "high",
+    "forecast": "5.25%",
+    "actual": "5.25%",
+    "previous": "5.25%"
+  },
+  {
+    "event_time_utc": "2007-01-31T18:15:00+00:00",
+    "event": "US FOMC Statement",
+    "impact": "high",
+    "forecast": "n/a",
+    "actual": "n/a",
+    "previous": "n/a"
+  },
+  {
+    "event_time_utc": "2007-01-31T21:30:00+00:00",
+    "event": "AU AIG Manufacturing Index",
+    "impact": "low",
+    "forecast": "n/a",
+    "actual": "51.3",
+    "previous": "52.4"
+  },
+  {
+    "event_time_utc": "2007-02-01T00:00:00+00:00",
+    "event": "CH Manufacturing PMI",
+    "impact": "medium",
+    "forecast": "n/a",
+    "actual": "55.1",
+    "previous": "54.8"
+  },
+  {
+    "event_time_utc": "2007-02-01T01:30:00+00:00",
+    "event": "CH RatingDog Manufacturing PMI",
+    "impact": "low",
+    "forecast": "n/a",
+    "actual": "52.0",
+    "previous": "52.4"
+  },
+  {
+    "event_time_utc": "2007-02-01T04:30:00+00:00",
+    "event": "AU Commodity Prices y/y",
+    "impact": "low",
+    "forecast": "n/a",
+    "actual": "10.1%",
+    "previous": "11.2%"
+  },
+  {
+    "event_time_utc": "2007-02-01T06:15:00+00:00",
+    "event": "SZ Trade Balance",
+    "impact": "low",
+    "forecast": "1.00B",
+    "actual": "0.43B",
+    "previous": "1.23B"
+  },
+  {
+    "event_time_utc": "2007-02-01T07:15:00+00:00",
+    "event": "SP Manufacturing PMI",
+    "impact": "low",
+    "forecast": "n/a",
+    "actual": "56.2",
+    "previous": "57.2"
+  },
+  {
+    "event_time_utc": "2007-02-01T07:30:00+00:00",
+    "event": "SZ Manufacturing PMI",
+    "impact": "low",
+    "forecast": "64.7",
+    "actual": "62.0",
+    "previous": "65.0"
+  },
+  {
+    "event_time_utc": "2007-02-01T07:45:00+00:00",
+    "event": "IT Manufacturing PMI",
+    "impact": "low",
+    "forecast": "54.6",
+    "actual": "53.5",
+    "previous": "55.0"
+  },
+  {
+    "event_time_utc": "2007-02-01T08:30:00+00:00",
+    "event": "UK Final Manufacturing PMI",
+    "impact": "low",
+    "forecast": "51.9",
+    "actual": "52.8",
+    "previous": "52.0"
+  },
+  {
+    "event_time_utc": "2007-02-01T12:30:00+00:00",
+    "event": "US Core PCE Price Index m/m",
+    "impact": "medium",
+    "forecast": "0.2%",
+    "actual": "0.1%",
+    "previous": "0.0%"
+  },
+  {
+    "event_time_utc": "2007-02-01T12:30:00+00:00",
+    "event": "US Personal Spending m/m",
+    "impact": "medium",
+    "forecast": "0.7%",
+    "actual": "0.7%",
+    "previous": "0.5%"
+  },
+  {
+    "event_time_utc": "2007-02-01T12:30:00+00:00",
+    "event": "US Personal Income m/m",
+    "impact": "low",
+    "forecast": "0.5%",
+    "actual": "0.5%",
+    "previous": "0.3%"
+  },
+  {
+    "event_time_utc": "2007-02-01T12:30:00+00:00",
+    "event": "US Unemployment Claims",
+    "impact": "low",
+    "forecast": "315K",
+    "actual": "307K",
+    "previous": "327K"
+  },
+  {
+    "event_time_utc": "2007-02-01T14:00:00+00:00",
+    "event": "US ISM Manufacturing PMI",
+    "impact": "medium",
+    "forecast": "51.6",
+    "actual": "49.3",
+    "previous": "51.4"
+  },
+  {
+    "event_time_utc": "2007-02-01T14:00:00+00:00",
+    "event": "US ISM Manufacturing Prices",
+    "impact": "low",
+    "forecast": "47.2",
+    "actual": "53.0",
+    "previous": "47.5"
+  },
+  {
+    "event_time_utc": "2007-02-01T14:00:00+00:00",
+    "event": "US Pending Home Sales m/m",
+    "impact": "low",
+    "forecast": "2.2%",
+    "actual": "4.9%",
+    "previous": "-0.3%"
+  },
+  {
+    "event_time_utc": "2007-01-31T22:00:00+00:00",
+    "event": "US Total Vehicle Sales",
+    "impact": "low",
+    "forecast": "16.6M",
+    "actual": "16.6M",
+    "previous": "16.7M"
+  },
+  {
+    "event_time_utc": "2007-02-01T22:50:00+00:00",
+    "event": "JN Monetary Base y/y",
+    "impact": "low",
+    "forecast": "-20.0%",
+    "actual": "-21.1%",
+    "previous": "-20.0%"
+  },
+  {
+    "event_time_utc": "2007-02-01T23:30:00+00:00",
+    "event": "AU Goods Trade Balance",
+    "impact": "low",
+    "forecast": "-1.05B",
+    "actual": "-1.34B",
+    "previous": "-0.90"
+  },
+  {
+    "event_time_utc": "2007-02-02T08:30:00+00:00",
+    "event": "UK Construction PMI",
+    "impact": "low",
+    "forecast": "57.0",
+    "actual": "57.9",
+    "previous": "57.5"
+  },
+  {
+    "event_time_utc": "2007-02-02T12:30:00+00:00",
+    "event": "US Average Hourly Earnings m/m",
+    "impact": "high",
+    "forecast": "0.4%",
+    "actual": "0.2%",
+    "previous": "0.4%"
+  },
+  {
+    "event_time_utc": "2007-02-02T12:30:00+00:00",
+    "event": "US Non-Farm Employment Change",
+    "impact": "high",
+    "forecast": "146K",
+    "actual": "111K",
+    "previous": "206K"
+  },
+  {
+    "event_time_utc": "2007-02-02T12:30:00+00:00",
+    "event": "US Unemployment Rate",
+    "impact": "high",
+    "forecast": "4.5%",
+    "actual": "4.6%",
+    "previous": "4.5%"
+  },
+  {
+    "event_time_utc": "2007-02-02T14:00:00+00:00",
+    "event": "US Factory Orders m/m",
+    "impact": "medium",
+    "forecast": "1.6%",
+    "actual": "2.4%",
+    "previous": "1.2%"
+  },
+  {
+    "event_time_utc": "2007-02-02T14:00:00+00:00",
+    "event": "US Revised UoM Consumer Sentiment",
+    "impact": "low",
+    "forecast": "98.0",
+    "actual": "96.9",
+    "previous": "98.0"
+  },
+  {
+    "event_time_utc": "2007-02-02T14:00:00+00:00",
+    "event": "US Revised UoM Inflation Expectations",
+    "impact": "low",
+    "forecast": "n/a",
+    "actual": "3.0%",
+    "previous": "3.0%"
+  },
+  {
+    "event_time_utc": "2007-02-03T00:00:00+00:00",
+    "event": "CH Non-Manufacturing PMI",
+    "impact": "medium",
+    "forecast": "n/a",
+    "actual": "55.6",
+    "previous": "n/a"
+  },
+  {
+    "event_time_utc": "2007-02-05T08:30:00+00:00",
+    "event": "UK Final Services PMI",
+    "impact": "low",
+    "forecast": "60.0",
+    "actual": "59.2",
+    "previous": "60.6"
+  },
+  {
+    "event_time_utc": "2007-02-05T09:00:00+00:00",
+    "event": "IT Prelim CPI m/m",
+    "impact": "low",
+    "forecast": "0.1%",
+    "actual": "0.2%",
+    "previous": "0.1%"
+  },
+  {
+    "event_time_utc": "2007-02-05T14:00:00+00:00",
+    "event": "CA Ivey PMI",
+    "impact": "medium",
+    "forecast": "52.0",
+    "actual": "53.8",
+    "previous": "49.4"
+  },
+  {
+    "event_time_utc": "2007-02-05T14:00:00+00:00",
+    "event": "US ISM Services PMI",
+    "impact": "high",
+    "forecast": "56.8",
+    "actual": "59.0",
+    "previous": "57.1"
+  },
+  {
+    "event_time_utc": "2007-02-06T07:00:00+00:00",
+    "event": "SZ Foreign Currency Reserves",
+    "impact": "low",
+    "forecast": "n/a",
+    "actual": "45B",
+    "previous": "46B"
+  },
+  {
+    "event_time_utc": "2007-02-06T10:00:00+00:00",
+    "event": "GE Factory Orders m/m",
+    "impact": "low",
+    "forecast": "0.5%",
+    "actual": "-0.2%",
+    "previous": "0.8%"
+  },
+  {
+    "event_time_utc": "2007-02-06T14:00:00+00:00",
+    "event": "US JOLTS Job Openings",
+    "impact": "low",
+    "forecast": "n/a",
+    "actual": "4.43M",
+    "previous": "4.29M"
+  },
+  {
+    "event_time_utc": "2007-02-06T21:30:00+00:00",
+    "event": "AU Cash Rate",
+    "impact": "medium",
+    "forecast": "6.25%",
+    "actual": "6.25%",
+    "previous": "6.25%"
+  },
+  {
+    "event_time_utc": "2007-02-07T08:30:00+00:00",
+    "event": "UK Manufacturing Production m/m",
+    "impact": "medium",
+    "forecast": "0.1%",
+    "actual": "0.2%",
+    "previous": "0.2%"
+  },
+  {
+    "event_time_utc": "2007-02-07T08:30:00+00:00",
+    "event": "UK Industrial Production m/m",
+    "impact": "low",
+    "forecast": "0.1%",
+    "actual": "-0.1%",
+    "previous": "0.4%"
+  },
+  {
+    "event_time_utc": "2007-02-07T10:00:00+00:00",
+    "event": "GE Industrial Production m/m",
+    "impact": "low",
+    "forecast": "0.5%",
+    "actual": "-0.5%",
+    "previous": "2.0%"
+  },
+  {
+    "event_time_utc": "2007-02-07T17:00:00+00:00",
+    "event": "US 10-y Bond Auction",
+    "impact": "medium",
+    "forecast": "n/a",
+    "actual": "4.74|2.4",
+    "previous": "4.58|2.5"
+  },
+  {
+    "event_time_utc": "2007-02-07T22:50:00+00:00",
+    "event": "JN M2 Money Stock y/y",
+    "impact": "low",
+    "forecast": "0.8%",
+    "actual": "1.0%",
+    "previous": "0.8%"
+  },
+  {
+    "event_time_utc": "2007-02-07T23:30:00+00:00",
+    "event": "AU Employment Change",
+    "impact": "low",
+    "forecast": "3.0K",
+    "actual": "-3.6K",
+    "previous": "46.0K"
+  },
+  {
+    "event_time_utc": "2007-02-07T23:30:00+00:00",
+    "event": "AU Unemployment Rate",
+    "impact": "low",
+    "forecast": "4.6%",
+    "actual": "4.5%",
+    "previous": "4.6%"
+  },
+  {
+    "event_time_utc": "2007-02-08T05:45:00+00:00",
+    "event": "SZ CPI m/m",
+    "impact": "low",
+    "forecast": "-0.3%",
+    "actual": "-0.7%",
+    "previous": "0.0%"
+  },
+  {
+    "event_time_utc": "2007-02-08T06:00:00+00:00",
+    "event": "GE Trade Balance",
+    "impact": "medium",
+    "forecast": "17.0B",
+    "actual": "14.4B",
+    "previous": "19.1B"
+  },
+  {
+    "event_time_utc": "2007-02-08T11:00:00+00:00",
+    "event": "UK Official Bank Rate",
+    "impact": "high",
+    "forecast": "5.25%",
+    "actual": "5.25%",
+    "previous": "5.25%"
+  },
+  {
+    "event_time_utc": "2007-02-08T11:45:00+00:00",
+    "event": "EZ Main Refinancing Rate",
+    "impact": "high",
+    "forecast": "3.50%",
+    "actual": "3.50%",
+    "previous": "3.50%"
+  },
+  {
+    "event_time_utc": "2007-02-08T12:30:00+00:00",
+    "event": "EZ ECB Press Conference",
+    "impact": "high",
+    "forecast": "n/a",
+    "actual": "n/a",
+    "previous": "n/a"
+  },
+  {
+    "event_time_utc": "2007-02-08T12:30:00+00:00",
+    "event": "US Unemployment Claims",
+    "impact": "low",
+    "forecast": "310K",
+    "actual": "311K",
+    "previous": "308K"
+  },
+  {
+    "event_time_utc": "2007-02-08T14:00:00+00:00",
+    "event": "US Final Wholesale Inventories m/m",
+    "impact": "medium",
+    "forecast": "0.6%",
+    "actual": "-0.5%",
+    "previous": "1.1%"
+  },
+  {
+    "event_time_utc": "2007-02-08T17:00:00+00:00",
+    "event": "US 30-y Bond Auction",
+    "impact": "medium",
+    "forecast": "n/a",
+    "actual": "4.81|2.5",
+    "previous": "5.08|1.8"
+  },
+  {
+    "event_time_utc": "2007-02-08T22:50:00+00:00",
+    "event": "JN Core Machinery Orders m/m",
+    "impact": "low",
+    "forecast": "-0.5%",
+    "actual": "-0.7%",
+    "previous": "3.8%"
+  },
+  {
+    "event_time_utc": "2007-02-09T06:45:00+00:00",
+    "event": "FR Industrial Production m/m",
+    "impact": "low",
+    "forecast": "0.2%",
+    "actual": "1.1%",
+    "previous": "-0.4%"
+  },
+  {
+    "event_time_utc": "2007-02-09T06:45:00+00:00",
+    "event": "FR Trade Balance",
+    "impact": "low",
+    "forecast": "-2.9B",
+    "actual": "-2.9B",
+    "previous": "-2.7B"
+  },
+  {
+    "event_time_utc": "2007-02-09T08:00:00+00:00",
+    "event": "IT Industrial Production m/m",
+    "impact": "low",
+    "forecast": "0.7%",
+    "actual": "2.0%",
+    "previous": "0.5%"
+  },
+  {
+    "event_time_utc": "2007-02-08T22:00:00+00:00",
+    "event": "G7 Meetings",
+    "impact": "high",
+    "forecast": "n/a",
+    "actual": "n/a",
+    "previous": "n/a"
+  },
+  {
+    "event_time_utc": "2007-02-09T08:30:00+00:00",
+    "event": "UK Goods Trade Balance",
+    "impact": "low",
+    "forecast": "-7.0B",
+    "actual": "-7.1B",
+    "previous": "-6.9B"
+  },
+  {
+    "event_time_utc": "2007-02-09T11:00:00+00:00",
+    "event": "CA Employment Change",
+    "impact": "high",
+    "forecast": "25.0K",
+    "actual": "89.0K",
+    "previous": "62.0K"
+  },
+  {
+    "event_time_utc": "2007-02-09T11:00:00+00:00",
+    "event": "CA Unemployment Rate",
+    "impact": "high",
+    "forecast": "6.1%",
+    "actual": "6.2%",
+    "previous": "6.1%"
+  },
+  {
+    "event_time_utc": "2007-02-09T22:00:00+00:00",
+    "event": "G7 Meetings",
+    "impact": "high",
+    "forecast": "n/a",
+    "actual": "n/a",
+    "previous": "n/a"
+  },
+  {
+    "event_time_utc": "2007-02-11T23:30:00+00:00",
+    "event": "AU RBA Monetary Policy Statement",
+    "impact": "low",
+    "forecast": "n/a",
+    "actual": "n/a",
+    "previous": "n/a"
+  },
+  {
+    "event_time_utc": "2007-02-12T02:10:00+00:00",
+    "event": "CH USD-Denominated Trade Balance",
+    "impact": "low",
+    "forecast": "15.5B",
+    "actual": "15.9B",
+    "previous": "21.0B"
+  },
+  {
+    "event_time_utc": "2007-02-13T01:00:00+00:00",
+    "event": "CH PPI y/y",
+    "impact": "low",
+    "forecast": "2.9%",
+    "actual": "3.3%",
+    "previous": "3.1%"
+  },
+  {
+    "event_time_utc": "2007-02-13T06:00:00+00:00",
+    "event": "GE Prelim GDP q/q",
+    "impact": "low",
+    "forecast": "0.6%",
+    "actual": "0.9%",
+    "previous": "0.8%"
+  },
+  {
+    "event_time_utc": "2007-02-13T06:45:00+00:00",
+    "event": "FR Prelim GDP q/q",
+    "impact": "low",
+    "forecast": "0.5%",
+    "actual": "0.6%",
+    "previous": "0.0%"
+  },
+  {
+    "event_time_utc": "2007-02-13T07:00:00+00:00",
+    "event": "SP Flash GDP q/q",
+    "impact": "low",
+    "forecast": "1.1%",
+    "actual": "1.1%",
+    "previous": "0.9%"
+  },
+  {
+    "event_time_utc": "2007-02-13T08:00:00+00:00",
+    "event": "IT Prelim GDP q/q",
+    "impact": "low",
+    "forecast": "0.4%",
+    "actual": "1.1%",
+    "previous": "0.3%"
+  },
+  {
+    "event_time_utc": "2007-02-13T08:30:00+00:00",
+    "event": "UK CPI y/y",
+    "impact": "medium",
+    "forecast": "2.9%",
+    "actual": "2.7%",
+    "previous": "3.0%"
+  },
+  {
+    "event_time_utc": "2007-02-13T08:30:00+00:00",
+    "event": "UK Core CPI y/y",
+    "impact": "low",
+    "forecast": "1.8%",
+    "actual": "1.6%",
+    "previous": "1.8%"
+  },
+  {
+    "event_time_utc": "2007-02-13T09:00:00+00:00",
+    "event": "EZ Flash GDP q/q",
+    "impact": "low",
+    "forecast": "0.6%",
+    "actual": "0.9%",
+    "previous": "0.2%"
+  },
+  {
+    "event_time_utc": "2007-02-13T09:00:00+00:00",
+    "event": "EZ Industrial Production m/m",
+    "impact": "low",
+    "forecast": "0.4%",
+    "actual": "1.0%",
+    "previous": "0.3%"
+  },
+  {
+    "event_time_utc": "2007-02-13T09:00:00+00:00",
+    "event": "GE ZEW Economic Sentiment",
+    "impact": "low",
+    "forecast": "5.2",
+    "actual": "2.9",
+    "previous": "-3.6"
+  },
+  {
+    "event_time_utc": "2007-02-13T12:30:00+00:00",
+    "event": "CA Trade Balance",
+    "impact": "medium",
+    "forecast": "4.7B",
+    "actual": "5.0B",
+    "previous": "4.7B"
+  },
+  {
+    "event_time_utc": "2007-02-13T12:30:00+00:00",
+    "event": "US Trade Balance",
+    "impact": "medium",
+    "forecast": "-59.5B",
+    "actual": "-61.2B",
+    "previous": "-58.1B"
+  },
+  {
+    "event_time_utc": "2007-02-14T01:00:00+00:00",
+    "event": "CH M2 Money Supply y/y",
+    "impact": "medium",
+    "forecast": "16.5%",
+    "actual": "15.8%",
+    "previous": "16.9%"
+  },
+  {
+    "event_time_utc": "2007-02-14T01:00:00+00:00",
+    "event": "CH CPI y/y",
+    "impact": "low",
+    "forecast": "2.7%",
+    "actual": "2.2%",
+    "previous": "2.8%"
+  },
+  {
+    "event_time_utc": "2007-02-14T01:00:00+00:00",
+    "event": "CH New Loans",
+    "impact": "low",
+    "forecast": "n/a",
+    "actual": "568B",
+    "previous": "214B"
+  },
+  {
+    "event_time_utc": "2007-02-14T03:30:00+00:00",
+    "event": "JN Revised Industrial Production m/m",
+    "impact": "low",
+    "forecast": "0.7%",
+    "actual": "0.9%",
+    "previous": "0.7%"
+  },
+  {
+    "event_time_utc": "2007-02-14T08:30:00+00:00",
+    "event": "UK Average Earnings Index 3m/y",
+    "impact": "low",
+    "forecast": "4.1%",
+    "actual": "4.0%",
+    "previous": "4.1%"
+  },
+  {
+    "event_time_utc": "2007-02-14T08:30:00+00:00",
+    "event": "UK Claimant Count Change",
+    "impact": "low",
+    "forecast": "-5.0K",
+    "actual": "-13.5K",
+    "previous": "-5.5K"
+  },
+  {
+    "event_time_utc": "2007-02-14T08:30:00+00:00",
+    "event": "UK Unemployment Rate",
+    "impact": "low",
+    "forecast": "5.5%",
+    "actual": "5.5%",
+    "previous": "5.5%"
+  },
+  {
+    "event_time_utc": "2007-02-14T09:30:00+00:00",
+    "event": "UK BOE Monetary Policy Report",
+    "impact": "medium",
+    "forecast": "n/a",
+    "actual": "n/a",
+    "previous": "n/a"
+  },
+  {
+    "event_time_utc": "2007-02-14T12:30:00+00:00",
+    "event": "US Core Retail Sales m/m",
+    "impact": "high",
+    "forecast": "0.4%",
+    "actual": "0.3%",
+    "previous": "1.3%"
+  },
+  {
+    "event_time_utc": "2007-02-14T12:30:00+00:00",
+    "event": "US Retail Sales m/m",
+    "impact": "high",
+    "forecast": "0.3%",
+    "actual": "0.0%",
+    "previous": "1.2%"
+  },
+  {
+    "event_time_utc": "2007-02-14T14:00:00+00:00",
+    "event": "US Business Inventories m/m",
+    "impact": "low",
+    "forecast": "0.2%",
+    "actual": "0.0%",
+    "previous": "0.2%"
+  },
+  {
+    "event_time_utc": "2007-02-14T14:00:00+00:00",
+    "event": "US Fed Monetary Policy Report",
+    "impact": "low",
+    "forecast": "n/a",
+    "actual": "n/a",
+    "previous": "n/a"
+  },
+  {
+    "event_time_utc": "2007-02-14T22:50:00+00:00",
+    "event": "JN Prelim GDP q/q",
+    "impact": "low",
+    "forecast": "0.9%",
+    "actual": "1.2%",
+    "previous": "0.1%"
+  },
+  {
+    "event_time_utc": "2007-02-15T08:30:00+00:00",
+    "event": "UK Retail Sales m/m",
+    "impact": "medium",
+    "forecast": "0.2%",
+    "actual": "-1.8%",
+    "previous": "1.1%"
+  },
+  {
+    "event_time_utc": "2007-02-15T12:30:00+00:00",
+    "event": "US Import Prices m/m",
+    "impact": "medium",
+    "forecast": "-0.2%",
+    "actual": "-1.2%",
+    "previous": "1.1%"
+  },
+  {
+    "event_time_utc": "2007-02-15T12:30:00+00:00",
+    "event": "US Empire State Manufacturing Index",
+    "impact": "low",
+    "forecast": "10.5",
+    "actual": "24.4",
+    "previous": "9.1"
+  },
+  {
+    "event_time_utc": "2007-02-15T12:30:00+00:00",
+    "event": "US Unemployment Claims",
+    "impact": "low",
+    "forecast": "314K",
+    "actual": "357K",
+    "previous": "313K"
+  },
+  {
+    "event_time_utc": "2007-02-15T13:15:00+00:00",
+    "event": "US Capacity Utilization Rate",
+    "impact": "medium",
+    "forecast": "81.8%",
+    "actual": "81.2%",
+    "previous": "81.8%"
+  },
+  {
+    "event_time_utc": "2007-02-15T13:15:00+00:00",
+    "event": "US Industrial Production m/m",
+    "impact": "medium",
+    "forecast": "0.0%",
+    "actual": "-0.5%",
+    "previous": "0.5%"
+  },
+  {
+    "event_time_utc": "2007-02-15T16:00:00+00:00",
+    "event": "US Philly Fed Manufacturing Index",
+    "impact": "medium",
+    "forecast": "3.5",
+    "actual": "0.6",
+    "previous": "8.3"
+  },
+  {
+    "event_time_utc": "2007-02-16T06:00:00+00:00",
+    "event": "GE Final CPI m/m",
+    "impact": "low",
+    "forecast": "-0.2%",
+    "actual": "-0.2%",
+    "previous": "-0.2%"
+  },
+  {
+    "event_time_utc": "2007-02-16T08:00:00+00:00",
+    "event": "IT Trade Balance",
+    "impact": "low",
+    "forecast": "-0.20B",
+    "actual": "-0.59B",
+    "previous": "-0.93B"
+  },
+  {
+    "event_time_utc": "2007-02-16T09:00:00+00:00",
+    "event": "EZ Trade Balance",
+    "impact": "low",
+    "forecast": "3.2B",
+    "actual": "0.7B",
+    "previous": "4.4B"
+  },
+  {
+    "event_time_utc": "2007-02-16T12:30:00+00:00",
+    "event": "US Core PPI m/m",
+    "impact": "medium",
+    "forecast": "0.2%",
+    "actual": "0.2%",
+    "previous": "0.2%"
+  },
+  {
+    "event_time_utc": "2007-02-16T12:30:00+00:00",
+    "event": "US PPI m/m",
+    "impact": "medium",
+    "forecast": "-0.6%",
+    "actual": "-0.6%",
+    "previous": "0.9%"
+  },
+  {
+    "event_time_utc": "2007-02-16T12:30:00+00:00",
+    "event": "US Building Permits",
+    "impact": "low",
+    "forecast": "1.59M",
+    "actual": "1.57M",
+    "previous": "1.61M"
+  },
+  {
+    "event_time_utc": "2007-02-16T12:30:00+00:00",
+    "event": "US Housing Starts",
+    "impact": "low",
+    "forecast": "1.61M",
+    "actual": "1.41M",
+    "previous": "1.64M"
+  },
+  {
+    "event_time_utc": "2007-02-16T14:00:00+00:00",
+    "event": "US Prelim UoM Consumer Sentiment",
+    "impact": "medium",
+    "forecast": "96.5",
+    "actual": "93.3",
+    "previous": "96.9"
+  },
+  {
+    "event_time_utc": "2007-02-16T14:00:00+00:00",
+    "event": "US Prelim UoM Inflation Expectations",
+    "impact": "low",
+    "forecast": "n/a",
+    "actual": "3.0%",
+    "previous": "3.0%"
+  },
+  {
+    "event_time_utc": "2007-02-19T12:30:00+00:00",
+    "event": "CA Wholesale Sales m/m",
+    "impact": "low",
+    "forecast": "0.6%",
+    "actual": "2.7%",
+    "previous": "0.3%"
+  },
+  {
+    "event_time_utc": "2007-02-20T06:15:00+00:00",
+    "event": "SZ Trade Balance",
+    "impact": "low",
+    "forecast": "0.75B",
+    "actual": "1.27B",
+    "previous": "0.41B"
+  },
+  {
+    "event_time_utc": "2007-02-20T08:30:00+00:00",
+    "event": "UK M4 Money Supply m/m",
+    "impact": "low",
+    "forecast": "0.8%",
+    "actual": "0.9%",
+    "previous": "0.9%"
+  },
+  {
+    "event_time_utc": "2007-02-20T08:30:00+00:00",
+    "event": "UK Public Sector Net Borrowing",
+    "impact": "low",
+    "forecast": "10.0B",
+    "actual": "-10.3B",
+    "previous": "6.5B"
+  },
+  {
+    "event_time_utc": "2007-02-20T11:00:00+00:00",
+    "event": "CA CPI m/m",
+    "impact": "medium",
+    "forecast": "0.1%",
+    "actual": "0.1%",
+    "previous": "0.2%"
+  },
+  {
+    "event_time_utc": "2007-02-20T23:30:00+00:00",
+    "event": "AU Wage Price Index q/q",
+    "impact": "medium",
+    "forecast": "0.9%",
+    "actual": "1.1%",
+    "previous": "0.8%"
+  },
+  {
+    "event_time_utc": "2007-02-21T05:30:00+00:00",
+    "event": "JN BOJ Press Conference",
+    "impact": "medium",
+    "forecast": "n/a",
+    "actual": "n/a",
+    "previous": "n/a"
+  },
+  {
+    "event_time_utc": "2007-02-21T08:30:00+00:00",
+    "event": "UK MPC Official Bank Rate Votes",
+    "impact": "high",
+    "forecast": "1-0-8",
+    "actual": "2-0-7",
+    "previous": "5-0-4"
+  },
+  {
+    "event_time_utc": "2007-02-21T12:30:00+00:00",
+    "event": "CA Core Retail Sales m/m",
+    "impact": "medium",
+    "forecast": "0.7%",
+    "actual": "2.0%",
+    "previous": "0.2%"
+  },
+  {
+    "event_time_utc": "2007-02-21T12:30:00+00:00",
+    "event": "CA Retail Sales m/m",
+    "impact": "medium",
+    "forecast": "1.0%",
+    "actual": "2.3%",
+    "previous": "0.3%"
+  },
+  {
+    "event_time_utc": "2007-02-21T12:30:00+00:00",
+    "event": "US Core CPI m/m",
+    "impact": "high",
+    "forecast": "0.2%",
+    "actual": "0.3%",
+    "previous": "0.2%"
+  },
+  {
+    "event_time_utc": "2007-02-21T12:30:00+00:00",
+    "event": "US Core CPI y/y",
+    "impact": "high",
+    "forecast": "2.6%",
+    "actual": "2.7%",
+    "previous": "2.6%"
+  },
+  {
+    "event_time_utc": "2007-02-21T12:30:00+00:00",
+    "event": "US CPI m/m",
+    "impact": "high",
+    "forecast": "0.2%",
+    "actual": "0.2%",
+    "previous": "0.5%"
+  },
+  {
+    "event_time_utc": "2007-02-21T12:30:00+00:00",
+    "event": "US CPI y/y",
+    "impact": "high",
+    "forecast": "2.0%",
+    "actual": "2.1%",
+    "previous": "2.5%"
+  },
+  {
+    "event_time_utc": "2007-02-21T14:00:00+00:00",
+    "event": "US CB Leading Index m/m",
+    "impact": "low",
+    "forecast": "0.2%",
+    "actual": "0.1%",
+    "previous": "0.6%"
+  },
+  {
+    "event_time_utc": "2007-02-21T18:00:00+00:00",
+    "event": "US FOMC Meeting Minutes",
+    "impact": "high",
+    "forecast": "n/a",
+    "actual": "n/a",
+    "previous": "n/a"
+  },
+  {
+    "event_time_utc": "2007-02-21T22:50:00+00:00",
+    "event": "JN Trade Balance",
+    "impact": "low",
+    "forecast": "0.75T",
+    "actual": "1.09T",
+    "previous": "0.71T"
+  },
+  {
+    "event_time_utc": "2007-02-22T06:00:00+00:00",
+    "event": "GE Final GDP q/q",
+    "impact": "low",
+    "forecast": "0.9%",
+    "actual": "0.9%",
+    "previous": "0.9%"
+  },
+  {
+    "event_time_utc": "2007-02-22T12:30:00+00:00",
+    "event": "US Unemployment Claims",
+    "impact": "low",
+    "forecast": "320K",
+    "actual": "332K",
+    "previous": "359K"
+  },
+  {
+    "event_time_utc": "2007-02-23T08:00:00+00:00",
+    "event": "GE ifo Business Climate",
+    "impact": "low",
+    "forecast": "107.5",
+    "actual": "107.0",
+    "previous": "107.9"
+  },
+  {
+    "event_time_utc": "2007-02-23T08:30:00+00:00",
+    "event": "UK Second Estimate GDP q/q",
+    "impact": "medium",
+    "forecast": "0.8%",
+    "actual": "0.8%",
+    "previous": "0.8%"
+  },
+  {
+    "event_time_utc": "2007-02-25T22:00:00+00:00",
+    "event": "EZ Eurogroup Meetings",
+    "impact": "low",
+    "forecast": "n/a",
+    "actual": "n/a",
+    "previous": "n/a"
+  },
+  {
+    "event_time_utc": "2007-02-27T06:00:00+00:00",
+    "event": "GE Import Prices m/m",
+    "impact": "low",
+    "forecast": "-0.2%",
+    "actual": "-0.7%",
+    "previous": "-0.3%"
+  },
+  {
+    "event_time_utc": "2007-02-26T22:00:00+00:00",
+    "event": "GE Prelim CPI m/m",
+    "impact": "low",
+    "forecast": "0.5%",
+    "actual": "0.4%",
+    "previous": "-0.2%"
+  },
+  {
+    "event_time_utc": "2007-02-27T08:00:00+00:00",
+    "event": "EZ M3 Money Supply y/y",
+    "impact": "low",
+    "forecast": "9.7%",
+    "actual": "9.8%",
+    "previous": "9.8%"
+  },
+  {
+    "event_time_utc": "2007-02-26T22:00:00+00:00",
+    "event": "EZ ECOFIN Meetings",
+    "impact": "low",
+    "forecast": "n/a",
+    "actual": "n/a",
+    "previous": "n/a"
+  },
+  {
+    "event_time_utc": "2007-02-27T12:30:00+00:00",
+    "event": "US Core Durable Goods Orders m/m",
+    "impact": "medium",
+    "forecast": "-0.2%",
+    "actual": "-3.1%",
+    "previous": "2.6%"
+  },
+  {
+    "event_time_utc": "2007-02-27T12:30:00+00:00",
+    "event": "US Durable Goods Orders m/m",
+    "impact": "medium",
+    "forecast": "-2.4%",
+    "actual": "-7.8%",
+    "previous": "2.8%"
+  },
+  {
+    "event_time_utc": "2007-02-27T13:00:00+00:00",
+    "event": "US S&P/CS Composite-20 HPI y/y",
+    "impact": "low",
+    "forecast": "0.9%",
+    "actual": "0.5%",
+    "previous": "1.8%"
+  },
+  {
+    "event_time_utc": "2007-02-27T14:00:00+00:00",
+    "event": "US CB Consumer Confidence",
+    "impact": "high",
+    "forecast": "109.0",
+    "actual": "112.5",
+    "previous": "110.2"
+  },
+  {
+    "event_time_utc": "2007-02-27T14:00:00+00:00",
+    "event": "US Existing Home Sales",
+    "impact": "medium",
+    "forecast": "6.25M",
+    "actual": "6.46M",
+    "previous": "6.27M"
+  },
+  {
+    "event_time_utc": "2007-02-27T14:00:00+00:00",
+    "event": "US Richmond Manufacturing Index",
+    "impact": "low",
+    "forecast": "-2",
+    "actual": "-10",
+    "previous": "-11"
+  },
+  {
+    "event_time_utc": "2007-02-27T22:50:00+00:00",
+    "event": "JN Prelim Industrial Production m/m",
+    "impact": "low",
+    "forecast": "-1.8%",
+    "actual": "-1.5%",
+    "previous": "0.9%"
+  },
+  {
+    "event_time_utc": "2007-02-28T09:00:00+00:00",
+    "event": "EZ Consumer Confidence",
+    "impact": "medium",
+    "forecast": "-6",
+    "actual": "-5",
+    "previous": "-7"
+  },
+  {
+    "event_time_utc": "2007-02-28T09:30:00+00:00",
+    "event": "SZ KOF Economic Barometer",
+    "impact": "medium",
+    "forecast": "1.70",
+    "actual": "1.79",
+    "previous": "1.74"
+  },
+  {
+    "event_time_utc": "2007-02-28T12:30:00+00:00",
+    "event": "US Prelim GDP q/q",
+    "impact": "high",
+    "forecast": "2.4%",
+    "actual": "2.2%",
+    "previous": "3.5%"
+  },
+  {
+    "event_time_utc": "2007-02-28T12:30:00+00:00",
+    "event": "US Prelim GDP Price Index q/q",
+    "impact": "low",
+    "forecast": "1.5%",
+    "actual": "1.7%",
+    "previous": "1.5%"
+  },
+  {
+    "event_time_utc": "2007-02-28T13:45:00+00:00",
+    "event": "US Chicago PMI",
+    "impact": "low",
+    "forecast": "50.0",
+    "actual": "47.9",
+    "previous": "48.8"
+  },
+  {
+    "event_time_utc": "2007-02-28T14:00:00+00:00",
+    "event": "US New Home Sales",
+    "impact": "medium",
+    "forecast": "1080K",
+    "actual": "937K",
+    "previous": "1123K"
+  },
+  {
+    "event_time_utc": "2007-02-28T21:30:00+00:00",
+    "event": "AU AIG Manufacturing Index",
+    "impact": "low",
+    "forecast": "n/a",
+    "actual": "57.7",
+    "previous": "51.3"
+  }
+]
