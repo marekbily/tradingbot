@@ -126,6 +126,35 @@ def _build_output_paths(
 	return json_path, csv_path
 
 
+def _load_existing_json_records(output_path: Path | None) -> list[dict[str, Any]]:
+	if output_path is None or not output_path.exists():
+		return []
+
+	try:
+		with output_path.open("r", encoding="utf-8") as handle:
+			loaded = json.load(handle)
+	except Exception:
+		logger.warning("Could not read existing checkpoint file %s; starting fresh merge", output_path)
+		return []
+
+	if isinstance(loaded, list):
+		return [record for record in loaded if isinstance(record, dict)]
+	return []
+
+
+def _merge_records(existing: list[dict[str, Any]], new_records: list[dict[str, Any]]) -> list[dict[str, Any]]:
+	return _dedupe_records(existing + new_records)
+
+
+def _write_cumulative_json(output_path: Path | None, new_records: list[dict[str, Any]]) -> Path | None:
+	if output_path is None:
+		return None
+
+	merged_records = _merge_records(_load_existing_json_records(output_path), new_records)
+	_write_json(merged_records, output_path)
+	return output_path
+
+
 def _month_end(value: datetime) -> datetime:
 	last_day = calendar.monthrange(value.year, value.month)[1]
 	return value.replace(day=last_day)
@@ -434,7 +463,7 @@ def scrape_calendar_range(
 			is_end_of_range = day_value.date() == end_date.date()
 			if is_month_boundary or is_end_of_range:
 				checkpoint_records = _dedupe_records(all_records)
-				_write_json(checkpoint_records, checkpoint_json_path)
+				_write_cumulative_json(checkpoint_json_path, checkpoint_records)
 				print(
 					f"Monthly checkpoint saved to {checkpoint_json_path} "
 					f"after {day_value:%Y-%m} ({len(checkpoint_records)} rows)"
@@ -494,7 +523,7 @@ def download_calendar_both_interleaved(
 				records_by_source[source] = _dedupe_records(records_by_source[source])
 				json_path, _ = paths_by_source[source]
 				if json_path is not None:
-					_write_json(records_by_source[source], json_path)
+						_write_cumulative_json(json_path, records_by_source[source])
 					print(
 						f"Monthly checkpoint saved to {json_path} "
 						f"after {day_value:%Y-%m} ({len(records_by_source[source])} rows)"
@@ -602,7 +631,7 @@ def download_calendar(
 	if output_format in {"json", "both"}:
 		if json_path is None:
 			raise RuntimeError("Internal error: JSON output path is not set")
-		json_path = _write_json(records, json_path)
+		json_path = _write_cumulative_json(json_path, records)
 	if output_format in {"csv", "both"}:
 		if csv_path is None:
 			raise RuntimeError("Internal error: CSV output path is not set")
