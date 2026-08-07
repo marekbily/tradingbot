@@ -37,7 +37,7 @@ COST = 0.0001
 TRAIN_END_DATE = "2022-01-01"
 
 # DreamerV3 hyperparameters
-BATCH_SIZE = 128
+BATCH_SIZE = 64
 PREFILL_STEPS = 5_000  # Random exploration to fill buffer
 TRAIN_STEPS = 10_000  # Training steps (updated to 1M)
 TRAIN_EVERY = 8  # Train every N environment steps
