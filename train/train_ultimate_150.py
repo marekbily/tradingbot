@@ -20,6 +20,7 @@ import numpy as np
 import torch
 from tqdm import tqdm
 import logging
+from pathlib import Path
 
 # Add parent directory to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -38,12 +39,14 @@ TRAIN_END_DATE = "2022-01-01"
 # DreamerV3 hyperparameters
 BATCH_SIZE = 128
 PREFILL_STEPS = 5_000  # Random exploration to fill buffer
-TRAIN_STEPS = 100_000  # Training steps (updated to 1M)
+TRAIN_STEPS = 10_000  # Training steps (updated to 1M)
 TRAIN_EVERY = 8  # Train every N environment steps
 SAVE_EVERY = 10_000
 
 SAVE_DIR = "train/dreamer_ultimate"
 SAVE_PREFIX = "ultimate_150_xauusd"
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+DATA_DIR = PROJECT_ROOT / "data"
 
 
 class TradingEnvironment:
@@ -188,7 +191,10 @@ def main():
     logger.info("📊 Loading Ultimate 150+ features...")
     logger.info("-" * 70)
 
-    X, returns, timestamps = make_ultimate_features(base_timeframe=args.base_tf)
+    X, returns, timestamps = make_ultimate_features(
+        base_timeframe=args.base_tf,
+        data_dir=str(DATA_DIR),
+    )
 
     logger.info(f"\n✅ Features loaded:")
     logger.info(f"  • Feature matrix: {X.shape}")
@@ -203,6 +209,10 @@ def main():
     train_idx = np.searchsorted(timestamps, train_cutoff, side='left')
     if train_idx <= 0:
         train_idx = len(X) // 2
+    train_idx = int(train_idx)
+
+    train_start_ts = timestamps[0]
+    train_end_ts = timestamps[train_idx - 1]
 
     X_train = X[:train_idx]
     r_train = returns[:train_idx]
@@ -218,10 +228,12 @@ def main():
         X_test = (X_test - feature_mean) / feature_std
 
     logger.info(f"  • Train samples: {len(X_train):,}")
-    logger.info(f"  • Train period: {timestamps[0]} to {timestamps[train_idx-1]}")
+    logger.info(f"  • Train period: {train_start_ts} to {train_end_ts}")
     if len(X_test) > 0:
         logger.info(f"  • Validation samples: {len(X_test):,}")
-        logger.info(f"  • Validation period: {timestamps[train_idx]} to {timestamps[-1]}")
+        validation_start_ts = timestamps[train_idx]
+        validation_end_ts = timestamps[-1]
+        logger.info(f"  • Validation period: {validation_start_ts} to {validation_end_ts}")
 
     # ========== CREATE ENVIRONMENT ==========
     logger.info("\n🎮 Creating trading environment...")
