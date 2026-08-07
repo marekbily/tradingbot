@@ -53,18 +53,28 @@ class TradingEnvironment:
     """
     Trading environment for DreamerV3 with Ultimate 150+ features
     """
-    def __init__(self, features, returns, window=64, cost_per_trade=0.0001, device='cpu'):
+    def __init__(
+        self,
+        features,
+        returns,
+        window=64,
+        cost_per_trade=0.0001,
+        device='cuda',
+        max_episode_steps=None,
+    ):
         self.device = torch.device(device)
         self.X = torch.tensor(features, dtype=torch.float32, device=self.device)
         self.r = torch.tensor(returns, dtype=torch.float32, device=self.device)
         self.window = int(window)
         self.cost = float(cost_per_trade)
+        self.max_episode_steps = int(max_episode_steps) if max_episode_steps else None
         self.T = len(self.r)
 
         logger.info(f"Environment initialized:")
         logger.info(f"  • Features: {self.X.shape}")
         logger.info(f"  • Window: {self.window}")
         logger.info(f"  • Cost: {self.cost:.4f}")
+        logger.info(f"  • Max episode steps: {self.max_episode_steps if self.max_episode_steps is not None else 'full dataset'}")
         logger.info(f"  • Total steps: {self.T:,}")
 
         self.reset()
@@ -72,6 +82,7 @@ class TradingEnvironment:
     def reset(self):
         """Reset environment"""
         self.t = self.window
+        self.episode_step = 0
         self.pos = 0  # 0 = flat, 1 = long
         self.equity = 1.0
 
@@ -125,12 +136,15 @@ class TradingEnvironment:
         self.equity *= float((1 + pnl).item())
         self.pos = new_pos
         self.t += 1
+        self.episode_step += 1
 
         # Reward
         reward = pnl
 
         # Done once we have consumed the final bar.
         done = (self.t >= self.T)
+        if self.max_episode_steps is not None:
+            done = done or (self.episode_step >= self.max_episode_steps)
 
         # Next observation
         obs = self._get_obs() if not done else torch.zeros_like(self._get_obs())
@@ -163,6 +177,7 @@ def main():
     parser.add_argument('--device', type=str, default='auto', help='Device: cuda/mps/cpu/auto')
     parser.add_argument('--resume', type=str, default=None, help='Resume from checkpoint')
     parser.add_argument('--base-tf', type=str, default='M5', help='Base timeframe (M5/M15/H1)')
+    parser.add_argument('--episode-steps', type=int, default=None, help='Optional maximum steps per episode for shorter runs')
     args = parser.parse_args()
 
     logger.info("="*70)
@@ -172,6 +187,7 @@ def main():
     logger.info(f"Batch size: {args.batch_size}")
     logger.info(f"Device: {args.device}")
     logger.info(f"Base timeframe: {args.base_tf}")
+    logger.info(f"Episode steps: {args.episode_steps if args.episode_steps is not None else 'full dataset'}")
     logger.info("")
 
     # ========== DEVICE SETUP ==========
@@ -238,7 +254,14 @@ def main():
     # ========== CREATE ENVIRONMENT ==========
     logger.info("\n🎮 Creating trading environment...")
 
-    env = TradingEnvironment(X_train, r_train, window=WINDOW, cost_per_trade=COST, device=device)
+    env = TradingEnvironment(
+        X_train,
+        r_train,
+        window=WINDOW,
+        cost_per_trade=COST,
+        device=device,
+        max_episode_steps=args.episode_steps,
+    )
 
     logger.info(f"\n✅ Environment ready:")
     logger.info(f"  • Observation dim: {env.observation_space}")
@@ -295,6 +318,7 @@ def main():
     episode_reward = 0
     episode_count = 0
     best_reward = -np.inf
+    best_partial_reward = -np.inf
 
     for step in tqdm(range(args.steps), desc="Training"):
         # Select action from agent (returns action and updated hidden state)
@@ -308,6 +332,8 @@ def main():
 
         # Accumulate reward
         episode_reward += float(reward.item())
+        if episode_reward > best_partial_reward:
+            best_partial_reward = episode_reward
 
         # Train agent every few steps
         if step % TRAIN_EVERY == 0:
@@ -341,11 +367,16 @@ def main():
     final_path = os.path.join(SAVE_DIR, f"{SAVE_PREFIX}_final.pt")
     agent.save(final_path)
 
+    if episode_count == 0:
+        best_reward = best_partial_reward
+
     logger.info("\n" + "="*70)
     logger.info("✅ TRAINING COMPLETE!")
     logger.info("="*70)
     logger.info(f"Final model saved: {final_path}")
     logger.info(f"Best episode reward: {best_reward:.6f}")
+    if episode_count == 0:
+        logger.info(f"Best partial reward: {best_partial_reward:.6f}")
     logger.info(f"Total episodes: {episode_count}")
 
     logger.info("\n🎉 Ultimate 150+ feature model is ready for deployment!")
