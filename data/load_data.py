@@ -47,6 +47,13 @@ def load_ohlc_csv(path: str | Path) -> pd.DataFrame:
     if "tick_volume" in df.columns:
         df["tick_volume"] = pd.to_numeric(df["tick_volume"], errors="coerce").fillna(0)
 
+    # Normalize volume naming for downstream feature code.
+    # MT5 exports often use tick_volume, while the feature pipeline expects volume.
+    if "volume" in df.columns:
+        df["volume"] = pd.to_numeric(df["volume"], errors="coerce").fillna(0)
+    elif "tick_volume" in df.columns:
+        df["volume"] = df["tick_volume"]
+
     df = df.dropna(subset=["time", "open", "high", "low", "close"]).copy()
 
     # ---- Sort & dedupe ----
@@ -60,6 +67,8 @@ def load_ohlc_csv(path: str | Path) -> pd.DataFrame:
 
     # Optional: keep only columns we need right now
     cols_to_keep = ["time", "open", "high", "low", "close"]
+    if "volume" in df.columns:
+        cols_to_keep.append("volume")
     if "tick_volume" in df.columns:
         cols_to_keep.append("tick_volume")
 

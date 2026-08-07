@@ -1,20 +1,3 @@
-"""
-ULTIMATE 150+ FEATURE SYSTEM - MAIN INTEGRATION
-
-This is the master module that combines ALL feature sources into
-a complete 150+ feature dataset ready for training.
-
-Feature Breakdown:
-- Timeframe features: 96 (16 × 6 timeframes: M5, M15, H1, H4, D1, W1)
-- Cross-timeframe: 12
-- Macro correlations: 24
-- Economic calendar: 8
-- Market microstructure: 12
-Total: 152 features
-
-This represents the maximum intelligence possible from available data.
-"""
-
 import pandas as pd
 import numpy as np
 import logging
@@ -32,6 +15,9 @@ def make_ultimate_features(
     start_date=None,
     end_date=None,
     warmup_days=30,
+    export_path: str | Path | None = None,
+    export_full_path: str | Path | None = None,
+    export_rows: int = 5000,
 ) -> tuple[np.ndarray, np.ndarray, pd.DatetimeIndex]:
     """
     Create complete 150+ feature set
@@ -42,6 +28,9 @@ def make_ultimate_features(
         start_date: Optional inclusive start date for the final output window
         end_date: Optional exclusive end date for the final output window
         warmup_days: Extra lookback window to keep before start_date for rolling indicators
+        export_path: Optional CSV path to write a preview of the generated training table
+        export_full_path: Optional path to write the full assembled training dataset
+        export_rows: Number of rows to export when export_path is provided
 
     Returns:
         features (ndarray): Shape (N, 152+), dtype float32
@@ -209,6 +198,47 @@ def make_ultimate_features(
 
     logger.info(f"   • Return samples: {len(returns):,}")
 
+    if export_path is not None:
+        export_path = Path(export_path)
+        export_path.parent.mkdir(parents=True, exist_ok=True)
+
+        export_df = all_features.head(export_rows).copy()
+        export_df.insert(0, 'time', export_df.index)
+        export_df['target_return'] = pd.Series(returns, index=all_features.index).head(export_rows).values
+        export_df.to_csv(export_path, index=False)
+        logger.info(f"💾 Exported preview dataset: {export_path} ({len(export_df):,} rows)")
+
+    if export_full_path is not None:
+        export_full_path = Path(export_full_path)
+        export_full_path.parent.mkdir(parents=True, exist_ok=True)
+
+        if export_full_path.suffix.lower() in {'.parquet', '.pq'}:
+            full_export_df = all_features.copy()
+            full_export_df.insert(0, 'time', full_export_df.index)
+            full_export_df['target_return'] = returns
+            full_export_df.to_parquet(export_full_path, index=False)
+            logger.info(
+                f"💾 Exported full training dataset: {export_full_path} "
+                f"({len(full_export_df):,} rows, {full_export_df.shape[1]} columns)"
+            )
+        else:
+            chunk_rows = 50_000
+            total_rows = len(all_features)
+            total_columns = all_features.shape[1] + 2
+
+            with export_full_path.open('w', encoding='utf-8', newline='') as handle:
+                for start in range(0, total_rows, chunk_rows):
+                    end = min(start + chunk_rows, total_rows)
+                    chunk = all_features.iloc[start:end].copy()
+                    chunk.insert(0, 'time', chunk.index)
+                    chunk['target_return'] = returns[start:end]
+                    chunk.to_csv(handle, index=False, header=(start == 0))
+
+            logger.info(
+                f"💾 Exported full training dataset: {export_full_path} "
+                f"({total_rows:,} rows, {total_columns} columns)"
+            )
+
     # ========== FINAL SUMMARY ==========
     logger.info("\n" + "="*70)
     logger.info("✅ ULTIMATE FEATURES CREATED!")
@@ -253,7 +283,10 @@ def make_ultimate_features(
     )
 
 
-def test_ultimate_features():
+def test_ultimate_features(
+    export_path: str | Path | None = None,
+    export_full_path: str | Path | None = None,
+):
     """
     Quick test to verify the complete system works
     """
@@ -263,7 +296,11 @@ def test_ultimate_features():
 
     try:
         # Generate features
-        X, r, timestamps = make_ultimate_features(base_timeframe='M5')
+        X, r, timestamps = make_ultimate_features(
+            base_timeframe='M5',
+            export_path=export_path,
+            export_full_path=export_full_path,
+        )
 
         logger.info("\n✅ Ultimate feature system test PASSED!")
 
@@ -296,7 +333,10 @@ def test_ultimate_features():
 
 if __name__ == "__main__":
     # Run full system test
-    X, r, timestamps = test_ultimate_features()
+    X, r, timestamps = test_ultimate_features(
+        export_path=Path("data/ultimate_150_features_preview.csv"),
+        export_full_path=Path("data/ultimate_150_features_full.csv"),
+    )
 
     logger.info("\n" + "="*70)
     logger.info("🚀 ULTIMATE 150+ FEATURE SYSTEM READY!")

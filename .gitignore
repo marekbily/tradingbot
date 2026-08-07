@@ -1,6 +1,8 @@
 runpod_ultimate150
 runpod_ultimate150.pub
 
+data/ultimate_150_features_full.csv
+
 # Python
 __pycache__/
 *.py[cod]
@@ -21,6 +23,7 @@ pyvenv.cfg
 
 # Data files (exclude large datasets)
 xauusd_m1.csv
+data/ultimate_150_features_full.csv
 data/*.json
 !data/.gitkeep
 
