@@ -148,26 +148,47 @@ def _robust_scale(values: np.ndarray) -> float:
 def _resolve_calendar_files(filepath):
     base_path = Path(filepath or "data")
 
-    search_dir = base_path if base_path.is_dir() else base_path.parent
+    search_roots = []
+    if base_path.exists() and base_path.is_dir():
+        search_roots.append(base_path)
+    else:
+        search_roots.append(base_path.parent)
 
-    if search_dir.exists():
-        if base_path.name.startswith("economic_events"):
-            sibling_files = []
+    economic_calendar_dir = base_path.parent / "economic_calendar"
+    if economic_calendar_dir.exists():
+        search_roots.append(economic_calendar_dir)
+
+    # Prefer modern forex/metals feeds anywhere under the data tree.
+    if base_path.name.startswith("economic_events"):
+        sibling_files = []
+        seen_paths = set()
+        for root in search_roots:
             for pattern in DEFAULT_CALENDAR_GLOB_PATTERNS:
-                sibling_files.extend(sorted(search_dir.glob(pattern)))
-            if sibling_files:
-                return sibling_files
+                for candidate in sorted(root.rglob(pattern)):
+                    resolved = candidate.resolve()
+                    if resolved in seen_paths:
+                        continue
+                    seen_paths.add(resolved)
+                    sibling_files.append(candidate)
+        if sibling_files:
+            return sibling_files
 
     if base_path.exists() and base_path.is_file():
         return [base_path]
 
     if base_path.exists() and base_path.is_dir():
         files = []
+        seen_paths = set()
         for pattern in DEFAULT_CALENDAR_GLOB_PATTERNS:
-            files.extend(sorted(base_path.glob(pattern)))
+            for candidate in sorted(base_path.rglob(pattern)):
+                resolved = candidate.resolve()
+                if resolved in seen_paths:
+                    continue
+                seen_paths.add(resolved)
+                files.append(candidate)
         if files:
             return files
-        return sorted(base_path.glob("economic_events*.json"))
+        return sorted(base_path.rglob("economic_events*.json"))
 
     return [base_path] if base_path.suffix.lower() == ".json" else []
 

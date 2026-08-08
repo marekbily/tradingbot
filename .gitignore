@@ -24,7 +24,6 @@ pyvenv.cfg
 # Data files (exclude large datasets)
 xauusd_m1.csv
 data/ultimate_150_features_full.csv
-data/*.json
 !data/.gitkeep
 
 # Model checkpoints - keep structure but exclude large files
