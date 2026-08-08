@@ -46,6 +46,19 @@ def compute_metrics(equity_curve, positions):
     }
 
 
+def _get_checkpoint_obs_dim(checkpoint_path):
+    checkpoint = torch.load(checkpoint_path, map_location='cpu')
+    encoder_state = checkpoint.get('encoder', {})
+
+    # Flat encoder checkpoints store the input width in the first linear layer.
+    for key in ('net.0.weight', 'per_step.0.weight'):
+        weight = encoder_state.get(key)
+        if weight is not None:
+            return int(weight.shape[1])
+
+    return None
+
+
 def main():
     parser = argparse.ArgumentParser(description='DreamerV3 forward backtest')
     parser.add_argument('--checkpoint', type=str, default=None,
@@ -100,6 +113,16 @@ def main():
     if ckpt is None:
         raise SystemExit('No checkpoint found. Train the model first or provide --checkpoint')
     args.checkpoint = ckpt
+
+    checkpoint_obs_dim = _get_checkpoint_obs_dim(args.checkpoint)
+    if checkpoint_obs_dim is not None and checkpoint_obs_dim != env.observation_space:
+        raise SystemExit(
+            "Checkpoint architecture mismatch:\n"
+            f"  checkpoint obs_dim = {checkpoint_obs_dim}\n"
+            f"  current env obs_dim = {env.observation_space}\n"
+            "This means the checkpoint was trained with a different feature/window setup.\n"
+            "Use a checkpoint trained on the current 169-feature model, or backtest the old feature set with the matching checkpoint."
+        )
 
     agent = DreamerV3Agent(
         obs_dim=env.observation_space,
